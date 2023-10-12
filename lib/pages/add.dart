@@ -1,40 +1,31 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 
-class AddLaundry extends StatefulWidget {
-  @override
-  _AddLaundryState createState() => _AddLaundryState();
-}
+class AddLaundry extends StatelessWidget {
+  // Define the selected outlet
+  final Map<String, dynamic> selectedOutlet = {
+    'name': 'Laundry CleanCare',
+    'description':
+        'Laundry Express tempat terbaik  mencuci pakaian Anda dengan cepat dan efisien.',
+    'address': 'Jalan Martadinata !!',
+    'openingHours': 'Mon-Sun: 8 AM - 9 PM',
+    'contact': 'Phone: (123) 456-7890',
+    'packages': [
+      {'name': 'Wash & Fold', 'price': 10000, 'quantity': 0},
+      {'name': 'Ironing', 'price': 5000, 'quantity': 0},
+      {'name': 'Fragrance', 'price': 2000, 'quantity': 0},
+      {'name': 'Complete Wash', 'price': 13000, 'quantity': 0},
+      {'name': 'Express Wash', 'price': 15000, 'quantity': 0},
+      {'name': 'Wash Only', 'price': 7000, 'quantity': 0},
+      {'name': 'Ironing with Fragrance', 'price': 7000, 'quantity': 0},
+      {'name': 'Ironing without Fragrance', 'price': 5000, 'quantity': 0},
+      {'name': 'Fragrance (Soft)', 'price': 5000, 'quantity': 0},
+      {'name': 'Fragrance (Flowerist)', 'price': 7000, 'quantity': 0},
+      {'name': 'Fragrance (Woody)', 'price': 5000, 'quantity': 0},
+    ],
+  };
 
-class _AddLaundryState extends State<AddLaundry> {
-  // List of laundry outlets
-  List<Map<String, String>> laundryOutlets = [
-    {
-      'name': 'Laundry Outlet 1',
-      'address': '123 Main St',
-      'openingHours': 'Mon-Fri: 8 AM - 6 PM',
-    },
-    {
-      'name': 'Laundry Outlet 2',
-      'address': '456 Elm St',
-      'openingHours': 'Mon-Fri: 9 AM - 7 PM',
-    },
-    {
-      'name': 'Laundry Outlet 3',
-      'address': '789 Oak St',
-      'openingHours': 'Mon-Fri: 7 AM - 5 PM',
-    },
-    {
-      'name': 'Laundry Outlet 4',
-      'address': '101 Pine St',
-      'openingHours': 'Mon-Fri: 10 AM - 8 PM',
-    },
-    {
-      'name': 'Laundry Outlet 5',
-      'address': '202 Cedar St',
-      'openingHours': 'Mon-Fri: 9 AM - 5 PM',
-    },
-  ];
+  AddLaundry({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,63 +47,55 @@ class _AddLaundryState extends State<AddLaundry> {
             ),
             SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: kToolbarHeight,
                     ),
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
                       },
-                      child: Icon(
+                      child: const Icon(
                         Icons.arrow_back_ios,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     RichText(
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: "Outlets",
+                            text: "Laundry Info",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
                                 ?.copyWith(
-                                      color: Colors.white,
-                                    ),
+                                  color: Colors.white,
+                                ),
                           ),
-                          // Add a widget here to select the outlet or laundry location
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
-                    // Display information about laundry outlets in a ListView
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: laundryOutlets.length,
-                      itemBuilder: (context, index) {
-                        final outlet = laundryOutlets[index];
-                        return OutletBox(
-                          name: outlet['name'] ?? '',
-                          address: outlet['address'] ?? '',
-                          openingHours: outlet['openingHours'] ?? '',
-                        );
-                      },
+                    // Display selected outlet's information
+                    OutletBox(
+                      name: selectedOutlet['name'] ?? '',
+                      description: selectedOutlet['description'] ?? '',
+                      address: selectedOutlet['address'] ?? '',
+                      openingHours: selectedOutlet['openingHours'] ?? '',
+                      contact: selectedOutlet['contact'] ?? '',
+                      packages: selectedOutlet['packages'] ?? [],
                     ),
-                    SizedBox(
-                      height: 40.0,
+                    const SizedBox(
+                      height: 20.0,
                     ),
-                    // Add a form here to input laundry details, such as type, quantity, price, etc.
-                    SizedBox(height: 10.0),
-                    // Add a button here to submit the laundry order
                   ],
                 ),
               ),
@@ -124,18 +107,34 @@ class _AddLaundryState extends State<AddLaundry> {
   }
 }
 
-class OutletBox extends StatelessWidget {
+class OutletBox extends StatefulWidget {
   final String name;
+  final String description;
   final String address;
   final String openingHours;
+  final String contact;
+  final List<Map<String, dynamic>> packages;
 
-  OutletBox({required this.name, required this.address, required this.openingHours});
+  const OutletBox({
+    super.key,
+    required this.name,
+    required this.description,
+    required this.address,
+    required this.openingHours,
+    required this.contact,
+    required this.packages,
+  });
 
+  @override
+  _OutletBoxState createState() => _OutletBoxState();
+}
+
+class _OutletBoxState extends State<OutletBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16.0),
-      padding: EdgeInsets.all(16.0),
+      margin: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.0),
@@ -144,28 +143,124 @@ class OutletBox extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            name,
-            style: TextStyle(
+            widget.name,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18.0,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
-            address,
-            style: TextStyle(
+            widget.description,
+            style: const TextStyle(
               color: Colors.grey,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
-            openingHours,
-            style: TextStyle(
+            widget.address,
+            style: const TextStyle(
               color: Colors.grey,
             ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            widget.openingHours,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            widget.contact,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          const Text(
+            'Packages:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          // Display laundry packages
+          Column(
+            children: widget.packages.map((package) {
+              return PackageWidget(package: package);
+            }).toList(),
           ),
         ],
       ),
+    );
+  }
+}
+
+class PackageWidget extends StatefulWidget {
+  final Map<String, dynamic> package;
+
+  const PackageWidget({super.key, required this.package});
+
+  @override
+  _PackageWidgetState createState() => _PackageWidgetState();
+}
+
+class _PackageWidgetState extends State<PackageWidget> {
+  int quantity = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              widget.package['name'] ?? '',
+              style: const TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+            Text(
+              'Rp${(widget.package['price'] * quantity).toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment:
+              MainAxisAlignment.center, // Align buttons at the center
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  if (quantity > 0) {
+                    quantity--;
+                  }
+                });
+              },
+              child: const Text('-'),
+            ),
+            const SizedBox(
+                width: 16.0), // Add some space between buttons and quantity
+            Text(quantity.toString(), style: const TextStyle(fontSize: 18.0)),
+            const SizedBox(
+                width: 16.0), // Add some space between quantity and buttons
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  quantity++;
+                });
+              },
+              child: const Text('+'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

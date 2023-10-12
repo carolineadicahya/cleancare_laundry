@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:CleanCare/firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:laundryapp/pages/add.dart';
-import 'package:laundryapp/pages/create_acc.dart';
-import 'package:laundryapp/pages/dashboard.dart';
-import 'package:laundryapp/pages/home.dart';
-import 'package:laundryapp/pages/login.dart';
-import 'package:laundryapp/pages/single_order.dart';
-import 'package:laundryapp/utils/constants.dart';
+import 'package:CleanCare/pages/add.dart';
+import 'package:CleanCare/pages/create_acc.dart';
+import 'package:CleanCare/pages/dashboard.dart';
+import 'package:CleanCare/pages/home.dart';
+import 'package:CleanCare/pages/login.dart';
+import 'package:CleanCare/pages/single_order.dart';
+import 'package:CleanCare/utils/constants.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.android,
+  );
   runApp(const MyApp());
 }
 
@@ -20,10 +26,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(375, 812),
+      designSize: const Size(375, 812),
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
-          title: 'Laundry App',
+          title: 'CleanCare',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             scaffoldBackgroundColor: Constants.scaffoldBackgroundColor,
@@ -42,31 +48,31 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
     case "/":
       return MaterialPageRoute(builder: (BuildContext context) {
-        return Home();
+        return const Home();
       });
     case "/login":
       return MaterialPageRoute(builder: (BuildContext context) {
-        return Login();
+        return const Login();
       });
     case "/create-acc":
       return MaterialPageRoute(builder: (BuildContext context) {
-        return CreateAccount();
+        return const CreateAccount();
       });
     case "/dashboard":
       return MaterialPageRoute(builder: (BuildContext context) {
-        return Dashboard();
+        return const Dashboard();
       });
-     case "/addlaundry":
+    case "/addlaundry":
       return MaterialPageRoute(builder: (BuildContext context) {
         return AddLaundry();
       });
     case "/single-order":
       return MaterialPageRoute(builder: (BuildContext context) {
-        return SingleOrder();
+        return const SingleOrder();
       });
     default:
       return MaterialPageRoute(builder: (BuildContext context) {
-        return Home();
+        return const Home();
       });
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:laundryapp/pages/create_acc.dart';
+import 'package:CleanCare/pages/create_acc.dart';
 import '../utils/constants.dart';
 import '../utils/helper.dart';
 import '../widgets/app_button.dart';
 
 class Home extends StatelessWidget {
+  const Home({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +27,7 @@ class Home extends StatelessWidget {
                     child: Container(
                       height: 150.0,
                       width: double.infinity,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage("assets/images/cloth_faded.png"),
                         ),
@@ -34,7 +36,7 @@ class Home extends StatelessWidget {
                   ),
                   Container(
                     child: Padding(
-                      padding: EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: Image.asset(
                         "assets/images/illustration.png",
                         scale: 1.1,
@@ -47,11 +49,11 @@ class Home extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 20.0,
                   vertical: 24.0,
                 ),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Constants.scaffoldBackgroundColor,
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(30.0),
@@ -61,25 +63,25 @@ class Home extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Text(
                       "Welcome to Clean Care",
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: Color.fromRGBO(19, 22, 33, 1),
+                            color: const Color.fromRGBO(19, 22, 33, 1),
                           ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10.0,
                     ),
-                    Text(
+                    const Text(
                       "This is the first version of our laundry app. Please sign in or create an account below.",
                       style: TextStyle(
                         color: Color.fromRGBO(74, 77, 84, 1),
                         fontSize: 14.0,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 40.0,
                     ),
                     // Let's create a generic button widget
@@ -90,7 +92,7 @@ class Home extends StatelessWidget {
                         nextScreen(context, "/login");
                       },
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15.0,
                     ),
                     AppButton(
@@ -99,7 +101,7 @@ class Home extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => CreateAccount(),
+                            builder: (context) => const CreateAccount(),
                           ),
                         );
                       },

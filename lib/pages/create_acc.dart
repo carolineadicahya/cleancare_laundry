@@ -1,130 +1,238 @@
 import 'package:flutter/material.dart';
-import '../utils/constants.dart';
-import '../utils/helper.dart';
-import '../widgets/app_button.dart';
-import '../widgets/input_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:CleanCare/pages/dashboard.dart';
+import 'package:CleanCare/pages/home.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+// import 'package:CleanCare/pages/dashboard.dart';
+import 'package:CleanCare/utils/constants.dart';
+import 'package:CleanCare/widgets/app_button.dart';
+import 'package:CleanCare/widgets/input_widget.dart';
 
-class CreateAccount extends StatelessWidget {
+class CreateAccount extends StatefulWidget {
+  const CreateAccount({Key? key}) : super(key: key);
+
+  @override
+  _CreateAccountState createState() => _CreateAccountState();
+}
+
+class _CreateAccountState extends State<CreateAccount> {
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  final TextEditingController _controllerFullName = TextEditingController();
+  final TextEditingController _controllerEmail = TextEditingController();
+  final TextEditingController _controllerPassword = TextEditingController();
+
+  Future<void> createUserWithEmailAndPassword() async {
+    context.loaderOverlay.show();
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
+
+      User? user = userCredential.user;
+      if (user != null) {
+        await user.sendEmailVerification();
+        await FirebaseFirestore.instance.collection('user').add({
+          'Full Name': _controllerFullName.text,
+          'Email': _controllerEmail.text,
+          'Password': _controllerPassword.text,
+        });
+
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Verification Email Sent'),
+              content: const Text(
+                  'A verification email has been sent to your email address. Please verify your email before logging in.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+
+      if (user != null && user.emailVerified) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Dashboard()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Home()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      context.loaderOverlay.hide();
+      if (e.code == 'weak-password') {
+        showErrorDialog('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        showErrorDialog('The account already exists for that email.');
+      } else {
+        showErrorDialog('An error occurred. Please try again later.');
+      }
+    }
+  }
+
+  void showErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Constants.primaryColor,
-      body: SafeArea(
-        bottom: false,
-        child: Container(
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                right: 0.0,
-                top: -20.0,
-                child: Opacity(
-                  opacity: 0.3,
-                  child: Image.asset(
-                    "assets/images/washing_machine_illustration.png",
+      body: LoaderOverlay(
+        useDefaultLoading: false,
+        overlayColor: Colors.black12,
+        overlayWidget: const Center(
+          child: SpinKitCircle(
+            color: Colors.black,
+            size: 50.0,
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Container(
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  right: 0.0,
+                  top: -20.0,
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: Image.asset(
+                      "assets/images/washing_machine_illustration.png",
+                    ),
                   ),
                 ),
-              ),
-              SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 15.0,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20.0,
-                            ),
-                            Text(
-                              "Create an Account",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40.0,
-                      ),
-                      Flexible(
-                        child: Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height,
-                          constraints: BoxConstraints(
-                            minHeight:
-                                MediaQuery.of(context).size.height - 180.0,
+                SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 15.0,
                           ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30.0),
-                              topRight: Radius.circular(30.0),
-                            ),
-                            color: Colors.white,
-                          ),
-                          padding: EdgeInsets.all(24.0),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              InputWidget(
-                                topLabel: "Full Name",
-                                hintText: "Enter your full name",
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.white,
+                                ),
                               ),
-                              SizedBox(
-                                height: 25.0,
-                              ),
-                              InputWidget(
-                                topLabel: "Email",
-                                hintText: "Enter your email address",
-                              ),
-                              SizedBox(
-                                height: 25.0,
-                              ),
-                              InputWidget(
-                                topLabel: "Password",
-                                obscureText: true,
-                                hintText: "Enter your password",
-                              ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20.0,
                               ),
-                              AppButton(
-                                type: ButtonType.PRIMARY,
-                                text: "Create Account",
-                                onPressed: () {
-                                  // Tambahkan logika pendaftaran akun di sini
-                                  nextScreen(context, "/dashboard");
-                                },
+                              Text(
+                                "Create an Account",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
                               )
                             ],
                           ),
                         ),
-                      )
-                    ],
+                        const SizedBox(
+                          height: 40.0,
+                        ),
+                        Flexible(
+                          child: Container(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height,
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  MediaQuery.of(context).size.height - 180.0,
+                            ),
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(30.0),
+                                topRight: Radius.circular(30.0),
+                              ),
+                              color: Colors.white,
+                            ),
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                InputWidget(
+                                  topLabel: "Full Name",
+                                  controller: _controllerFullName,
+                                  hintText: "Enter your full name",
+                                ),
+                                const SizedBox(
+                                  height: 25.0,
+                                ),
+                                InputWidget(
+                                  topLabel: "Email",
+                                  controller: _controllerEmail,
+                                  hintText: "Enter your email address",
+                                ),
+                                const SizedBox(
+                                  height: 25.0,
+                                ),
+                                InputWidget(
+                                  topLabel: "Password",
+                                  controller: _controllerPassword,
+                                  obscureText: true,
+                                  hintText: "Enter your password",
+                                ),
+                                const SizedBox(
+                                  height: 20.0,
+                                ),
+                                AppButton(
+                                    type: ButtonType.PRIMARY,
+                                    text: "Create Account",
+                                    onPressed: createUserWithEmailAndPassword)
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

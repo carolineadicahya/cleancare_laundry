@@ -21,16 +21,18 @@ class LatestOrders extends StatelessWidget {
       status: OrderStatus.PICKING_UP,
     )
   ];
+
+  LatestOrders({super.key});
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 20.0,
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 24.0,
             ),
@@ -54,16 +56,16 @@ class LatestOrders extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
           ListView.separated(
             shrinkWrap: true,
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 10.0,
             ),
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
               // Lets pass the order to a new widget and render it there
               return OrderCard(
@@ -71,7 +73,7 @@ class LatestOrders extends StatelessWidget {
               );
             },
             separatorBuilder: (BuildContext context, int index) {
-              return SizedBox(
+              return const SizedBox(
                 height: 15.0,
               );
             },

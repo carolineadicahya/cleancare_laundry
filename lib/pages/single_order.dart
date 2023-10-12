@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../utils/constants.dart';
 
 class SingleOrder extends StatefulWidget {
+  const SingleOrder({super.key});
+
   @override
   _SingleOrderState createState() => _SingleOrderState();
 }
@@ -28,23 +30,23 @@ class _SingleOrderState extends State<SingleOrder> {
             ),
             SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: kToolbarHeight,
                     ),
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
                       },
-                      child: Icon(
+                      child: const Icon(
                         Icons.arrow_back_ios,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     RichText(
@@ -52,23 +54,27 @@ class _SingleOrderState extends State<SingleOrder> {
                         children: [
                           TextSpan(
                             text: "Details About\n",
-                            style:
-                                Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.white,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Colors.white,
+                                ),
                           ),
                           TextSpan(
                             text: "Order #521",
-                            style:
-                                Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 40.0,
                     ),
                     Container(
@@ -77,7 +83,7 @@ class _SingleOrderState extends State<SingleOrder> {
                         borderRadius: BorderRadius.circular(8.0),
                         color: Constants.scaffoldBackgroundColor,
                       ),
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         vertical: 24.0,
                         horizontal: 16.0,
                       ),
@@ -87,82 +93,86 @@ class _SingleOrderState extends State<SingleOrder> {
                         children: [
                           Text(
                             "Order Details",
-                            style:
-                                Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Color.fromRGBO(74, 77, 84, 1),
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w800,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: const Color.fromRGBO(74, 77, 84, 1),
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w800,
+                                ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 6.0,
                           ),
-                          Text(
+                          const Text(
                             "WASHING AND FOLDING",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Color.fromRGBO(143, 148, 162, 1),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10.0,
                           ),
                           getItemRow("3", "T-shirts (man)", "\$30.00"),
                           getItemRow("2", "T-shirts (man)", "\$40.00"),
                           getItemRow("4", "Pants (man)", "\$80.00"),
                           getItemRow("1", "Jeans (man)", "\$20.00"),
-                          SizedBox(
+                          const SizedBox(
                             height: 30.0,
                           ),
-                          Text(
+                          const Text(
                             "IRONING",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Color.fromRGBO(143, 148, 162, 1),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10.0,
                           ),
                           getItemRow("3", "T-shirt (woman)", "\$30.00"),
-                          Divider(),
+                          const Divider(),
                           getSubtotalRow("Subtotal", "\$200.00"),
                           getSubtotalRow("Delivery", "\$225.00"),
-                          SizedBox(
+                          const SizedBox(
                             height: 10.0,
                           ),
                           getTotalRow("Total", "\$225.00"),
                         ],
                       ),
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       height: ScreenUtil().setHeight(127.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
                             "Your clothes are now washing.",
-                            style:
-                                Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Color.fromRGBO(74, 77, 84, 1),
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w800,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: const Color.fromRGBO(74, 77, 84, 1),
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w800,
+                                ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5.0,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               RichText(
-                                text: TextSpan(
+                                text: const TextSpan(
                                   children: [
                                     TextSpan(
                                       text: "Estimated Delivery\n",
@@ -201,21 +211,21 @@ class _SingleOrderState extends State<SingleOrder> {
 
 Widget getTotalRow(String title, String amount) {
   return Padding(
-    padding: EdgeInsets.only(bottom: 8.0),
+    padding: const EdgeInsets.only(bottom: 8.0),
     child: Row(
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color.fromRGBO(19, 22, 33, 1),
             fontSize: 17.0,
             fontWeight: FontWeight.w600,
           ),
         ),
-        Spacer(),
+        const Spacer(),
         Text(
           amount,
-          style: TextStyle(
+          style: const TextStyle(
             color: Constants.primaryColor,
             fontWeight: FontWeight.w600,
             fontSize: 17.0,
@@ -228,21 +238,21 @@ Widget getTotalRow(String title, String amount) {
 
 Widget getSubtotalRow(String title, String price) {
   return Padding(
-    padding: EdgeInsets.only(bottom: 8.0),
+    padding: const EdgeInsets.only(bottom: 8.0),
     child: Row(
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color.fromRGBO(74, 77, 84, 1),
             fontSize: 15.0,
             fontWeight: FontWeight.w600,
           ),
         ),
-        Spacer(),
+        const Spacer(),
         Text(
           price,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color.fromRGBO(74, 77, 84, 1),
             fontSize: 15.0,
           ),
@@ -254,12 +264,12 @@ Widget getSubtotalRow(String title, String price) {
 
 Widget getItemRow(String count, String item, String price) {
   return Padding(
-    padding: EdgeInsets.only(bottom: 8.0),
+    padding: const EdgeInsets.only(bottom: 8.0),
     child: Row(
       children: [
         Text(
           count,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color.fromRGBO(74, 77, 84, 1),
             fontSize: 15.0,
             fontWeight: FontWeight.w600,
@@ -268,7 +278,7 @@ Widget getItemRow(String count, String item, String price) {
         Expanded(
           child: Text(
             " x $item",
-            style: TextStyle(
+            style: const TextStyle(
               color: Color.fromRGBO(143, 148, 162, 1),
               fontSize: 15.0,
             ),
@@ -276,7 +286,7 @@ Widget getItemRow(String count, String item, String price) {
         ),
         Text(
           price,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color.fromRGBO(74, 77, 84, 1),
             fontSize: 15.0,
           ),

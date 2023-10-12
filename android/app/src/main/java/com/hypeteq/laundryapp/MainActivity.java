@@ -1,4 +1,4 @@
-package com.hypeteq.laundryapp;
+package com.cleancare.laundryapp;
 
 import io.flutter.embedding.android.FlutterActivity;
 
