@@ -3,6 +3,8 @@
         android:label="CleanCare"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAeqrAND55gTmvw_-rU_kWW6TigGwy__vE"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

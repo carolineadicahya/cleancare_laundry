@@ -30,14 +30,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserProfile() async {
     user = _auth.currentUser!;
-
-    final userDoc = await _firestore.collection('user').doc(user.uid).get();
-    if (userDoc.exists) {
+    final userData = await _firestore.collection('user').doc(user.uid).get();
+    if (userData.exists) {
       setState(() {
-        name = userDoc['fullname'] ?? '';
-        address = userDoc['address'] ?? '';
-        phoneNumber = userDoc['phoneNumber'] ?? '';
-        email = userDoc['email'] ?? '';
+        nameController.text = userData['Full Name'];
+        emailController.text = userData['Email'];
+      });
+    }
+
+    final profileData =
+        await _firestore.collection('profil').doc(user.uid).get();
+    if (profileData.exists) {
+      setState(() {
+        nameController.text = profileData['name'] ?? nameController.text;
+        addressController.text =
+            profileData['address'] ?? addressController.text;
+        phoneNumberController.text =
+            profileData['phoneNumber'] ?? phoneNumberController.text;
+        emailController.text = profileData['email'] ?? emailController.text;
       });
     }
   }
@@ -190,11 +200,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _saveChanges() async {
-    final userDocRef = _firestore.collection('user').doc(user.uid);
+    final userDocRef = _firestore.collection('profil').doc(user.uid);
     await userDocRef.set({
       'name': nameController.text,
       'address': addressController.text,
       'phoneNumber': phoneNumberController.text,
+      'email': emailController.text,
     }, SetOptions(merge: true));
     setState(() {
       isEditing = false;

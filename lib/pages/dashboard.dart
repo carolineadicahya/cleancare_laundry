@@ -1,4 +1,8 @@
+import 'package:CleanCare/pages/map.dart';
+import 'package:CleanCare/pages/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:CleanCare/pages/add.dart';
@@ -17,6 +21,32 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   // Track active index
   int activeIndex = 0;
+
+  String fullName = "Pelanggan"; // Inisialisasi nama default
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserName(); // Memuat nama pengguna saat widget diinisialisasi
+  }
+
+  Future<void> loadUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Ambil data nama dari Firestore
+      final userData = await FirebaseFirestore.instance
+          .collection('user')
+          .doc(user.uid)
+          .get();
+      if (userData.exists) {
+        final userName = userData['Full Name'];
+        setState(() {
+          fullName = userName ?? "Pelanggan";
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,10 +59,20 @@ class _DashboardState extends State<Dashboard> {
             size: 30.0,
             color: activeIndex == 0 ? Colors.white : const Color(0xFFC8C9CB),
           ),
-          Icon(
-            Icons.pin_drop_rounded,
-            size: 30.0,
-            color: activeIndex == 1 ? Colors.white : const Color(0xFFC8C9CB),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MapPage(),
+                ),
+              );
+            },
+            child: Icon(
+              Icons.pin_drop_rounded,
+              size: 30.0,
+              color: activeIndex == 1 ? Colors.white : const Color(0xFFC8C9CB),
+            ),
           ),
           GestureDetector(
             onTap: () {
@@ -107,14 +147,34 @@ class _DashboardState extends State<Dashboard> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.white,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                await FirebaseAuth.instance.signOut();
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const Login()),
+                                );
+                              },
+                              child: Icon(
+                                IconData(0xf88b, fontFamily: 'MaterialIcons'),
+                                color: Colors.white,
+                                size: 24.0,
+                              ),
+                            ),
+                          ],
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +192,7 @@ class _DashboardState extends State<Dashboard> {
                                         ),
                                   ),
                                   TextSpan(
-                                    text: "Hi, Jaehyun!",
+                                    text: "$fullName!",
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge

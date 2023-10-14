@@ -1,277 +1,147 @@
-// import 'package:flutter/material.dart';
-// import '../utils/constants.dart';
-// import 'package:flutter_google_maps/flutter_google_maps.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
-// class LaundryPage extends StatelessWidget {
-//   final Map<String, dynamic> selectedOutlet;
+class MapPage extends StatefulWidget {
+  const MapPage({super.key});
 
-//   LaundryPage({required this.selectedOutlet});
+  @override
+  State<MapPage> createState() => MapPageState();
+}
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final LatLng center = LatLng(-6.2088, 106.8456); // Ganti dengan koordinat lokasi laundry Anda
+class MapPageState extends State<MapPage> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+  final Location location = Location();
+  Set<Marker> _markers = Set<Marker>();
+  Set<Polyline> _polylines = Set<Polyline>();
+  List<LatLng> polylineCoordinates = [];
+  PolylinePoints polylinePoints = PolylinePoints();
 
-//     return Scaffold(
-//       backgroundColor: Constants.primaryColor,
-//       body: Container(
-//         child: Stack(
-//           clipBehavior: Clip.none,
-//           children: [
-//             Positioned(
-//               right: 0.0,
-//               top: 10.0,
-//               child: Opacity(
-//                 opacity: 0.3,
-//                 child: Image.asset(
-//                   "assets/images/washing_machine_illustration.png",
-//                 ),
-//               ),
-//             ),
-//             SingleChildScrollView(
-//               child: Container(
-//                 padding: EdgeInsets.symmetric(horizontal: 24.0),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     SizedBox(
-//                       height: kToolbarHeight,
-//                     ),
-//                     GestureDetector(
-//                       onTap: () {
-//                         Navigator.pop(context);
-//                       },
-//                       child: Icon(
-//                         Icons.arrow_back_ios,
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       height: 20.0,
-//                     ),
-//                     RichText(
-//                       text: TextSpan(
-//                         children: [
-//                           TextSpan(
-//                             text: "Laundry Info",
-//                             style: Theme.of(context)
-//                                 .textTheme
-//                                 .titleLarge
-//                                 ?.copyWith(
-//                                   color: Colors.white,
-//                                 ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       height: 20.0,
-//                     ),
-//                     // Display selected outlet's information
-//                     OutletBox(
-//                       name: selectedOutlet['name'] ?? '',
-//                       description: selectedOutlet['description'] ?? '',
-//                       address: selectedOutlet['address'] ?? '',
-//                       openingHours: selectedOutlet['openingHours'] ?? '',
-//                       contact: selectedOutlet['contact'] ?? '',
-//                       packages: selectedOutlet['packages'] ?? [],
-//                     ),
-//                     SizedBox(
-//                       height: 20.0,
-//                     ),
-//                     // Add Google Maps here
-//                     Container(
-//                       height: 300, // Sesuaikan dengan tinggi yang Anda inginkan
-//                       child: GoogleMap(
-//                         initialPosition: GeoCoord(center.latitude, center.longitude),
-//                         mapType: MapType.roadmap, // Ganti dengan tipe peta yang Anda inginkan
-//                         interactive: true,
-//                         markers: {
-//                           Marker(GeoCoord(center.latitude, center.longitude)),
-//                         },
-//                         mobilePreferences: MobileMapPreferences(
-//                           zoomControlsEnabled: false,
-//                           myLocationButtonEnabled: false,
-//                         ),
-//                         webPreferences: WebMapPreferences(
-//                           fullscreenControl: true,
-//                         ),
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       height: 20.0,
-//                     ),
-//                     // Add a form here to input laundry details, such as type, quantity, price, etc.
-//                     // You can add form fields and input widgets here.
-//                     // For example, TextFormField for type, quantity, etc.
-//                     // SizedBox(height: 10.0),
-//                     // Add a button here to submit the laundry order
-//                     // RaisedButton(
-//                     //   onPressed: () {
-//                     //     // Handle order submission
-//                     //   },
-//                     //   child: Text("Submit Order"),
-//                     // ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+  static const CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(-1.2921, 116.8385),
+    zoom: 14.0,
+  );
 
-// class OutletBox extends StatefulWidget {
-//   final String name;
-//   final String description;
-//   final String address;
-//   final String openingHours;
-//   final String contact;
-//   final List<Map<String, dynamic>> packages;
+  @override
+  void initState() {
+    super.initState();
+    getCurrentLocation();
+  }
 
-//   OutletBox({
-//     required this.name,
-//     required this.description,
-//     required this.address,
-//     required this.openingHours,
-//     required this.contact,
-//     required this.packages,
-//   });
+  void getCurrentLocation() async {
+    try {
+      final currentLocation = await location.getLocation();
+      final LatLng destination = LatLng(-1.2560436592076922, 116.8360665);
 
-//   @override
-//   _OutletBoxState createState() => _OutletBoxState();
-// }
+      setState(() {
+        _markers.add(
+          Marker(
+            markerId: MarkerId('current'),
+            position: LatLng(
+              currentLocation.latitude ?? 0.0,
+              currentLocation.longitude ?? 0.0,
+            ),
+            infoWindow: InfoWindow(
+              title: 'Current Location',
+            ),
+          ),
+        );
+        _markers.add(
+          Marker(
+            markerId: MarkerId('destination'),
+            position: destination,
+            infoWindow: InfoWindow(
+              title: 'Destination',
+            ),
+          ),
+        );
 
-// class _OutletBoxState extends State<OutletBox> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       margin: EdgeInsets.only(bottom: 16.0),
-//       padding: EdgeInsets.all(16.0),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(8.0),
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text(
-//             widget.name,
-//             style: TextStyle(
-//               fontWeight: FontWeight.bold,
-//               fontSize: 18.0,
-//             ),
-//           ),
-//           SizedBox(height: 8.0),
-//           Text(
-//             widget.description,
-//             style: TextStyle(
-//               color: Colors.grey,
-//             ),
-//           ),
-//           SizedBox(height: 8.0),
-//           Text(
-//             widget.address,
-//             style: TextStyle(
-//               color: Colors.grey,
-//             ),
-//           ),
-//           SizedBox(height: 8.0),
-//           Text(
-//             widget.openingHours,
-//             style: TextStyle(
-//               color: Colors.grey,
-//             ),
-//           ),
-//           SizedBox(height: 8.0),
-//           Text(
-//             widget.contact,
-//             style: TextStyle(
-//               color: Colors.grey,
-//             ),
-//           ),
-//           SizedBox(height: 16.0),
-//           Text(
-//             'Packages:',
-//             style: TextStyle(
-//               fontWeight: FontWeight.bold,
-//               fontSize: 16.0,
-//             ),
-//           ),
-//           SizedBox(height: 8.0),
-//           // Display laundry packages
-//           Column(
-//             children: widget.packages.map((package) {
-//               return PackageWidget(package: package);
-//             }).toList(),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+        _setPolylines(
+          LatLng(
+            currentLocation.latitude ?? 0.0,
+            currentLocation.longitude ?? 0.0,
+          ),
+          destination,
+        );
+      });
 
-// class PackageWidget extends StatefulWidget {
-//   final Map<String, dynamic> package;
+      final GoogleMapController controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            currentLocation.latitude ?? 0.0,
+            currentLocation.longitude ?? 0.0,
+          ),
+          zoom: 14.0,
+        ),
+      ));
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
-//   PackageWidget({required this.package});
+  void _setPolylines(LatLng origin, LatLng destination) async {
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      'AIzaSyAeqrAND55gTmvw_-rU_kWW6TigGwy__vE',
+      PointLatLng(origin.latitude, origin.longitude),
+      PointLatLng(destination.latitude, destination.longitude),
+    );
 
-//   @override
-//   _PackageWidgetState createState() => _PackageWidgetState();
-// }
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
 
-// class _PackageWidgetState extends State<PackageWidget> {
-//   int quantity = 0;
+    setState(() {
+      _polylines.add(
+        Polyline(
+          width: 5,
+          polylineId: PolylineId('polyline'),
+          color: Colors.blue,
+          points: polylineCoordinates,
+        ),
+      );
+    });
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: [
-//             Text(
-//               widget.package['name'] ?? '',
-//               style: TextStyle(
-//                 fontSize: 14.0,
-//               ),
-//             ),
-//             Text(
-//               '\$${(widget.package['price'] * quantity).toStringAsFixed(2)}',
-//               style: TextStyle(
-//                 fontSize: 14.0,
-//               ),
-//             ),
-//           ],
-//         ),
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             ElevatedButton(
-//               onPressed: () {
-//                 setState(() {
-//                   if (quantity > 0) {
-//                     quantity--;
-//                   }
-//                 });
-//               },
-//               child: Text('-'),
-//             ),
-//             SizedBox(width: 16.0),
-//             Text(quantity.toString(), style: TextStyle(fontSize: 18.0)),
-//             SizedBox(width: 16.0),
-//             ElevatedButton(
-//               onPressed: () {
-//                 setState(() {
-//                   quantity++;
-//                 });
-//               },
-//               child: Text('+'),
-//             ),
-//           ],
-//         ),
-//       ],
-//     );
-//   }
-// }
+  Future<void> _openGoogleMaps(LatLng destination) async {
+    final uri = Uri.https('www.google.com', 'maps/dir/', {
+      'api': '1',
+      'destination': '${destination.latitude},${destination.longitude}',
+    });
+    final url = uri.toString();
+    if (await UrlLauncher.canLaunch(url)) {
+      await UrlLauncher.launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: _kGooglePlex,
+        onMapCreated: (GoogleMapController controller) {
+          _controller.complete(controller);
+        },
+        markers: _markers,
+        polylines: _polylines,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          final LatLng destination = LatLng(-1.2560436592076922, 116.8360665);
+          _openGoogleMaps(destination);
+        },
+        label: const Text('Petunjuk Arah'),
+        icon: const Icon(Icons.directions),
+      ),
+    );
+  }
+}

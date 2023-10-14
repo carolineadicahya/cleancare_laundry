@@ -65,7 +65,7 @@ class _LoginState extends State<Login> {
       } else if (e.code == 'user-not-found') {
         showErrorDialog('Akun dengan email tersebut tidak ditemukan.');
       } else {
-        showErrorDialog('An error occurred. Silakan coba lagi nanti.');
+        showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
       }
     }
   }

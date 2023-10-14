@@ -40,14 +40,13 @@ class _CreateAccountState extends State<CreateAccount> {
           'Email': _controllerEmail.text,
           'Password': _controllerPassword.text,
         });
-
         showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: const Text('Verification Email Sent'),
+              title: const Text('Email Verifikasi Terkirim'),
               content: const Text(
-                  'A verification email has been sent to your email address. Please verify your email before logging in.'),
+                  'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -75,11 +74,11 @@ class _CreateAccountState extends State<CreateAccount> {
     } on FirebaseAuthException catch (e) {
       context.loaderOverlay.hide();
       if (e.code == 'weak-password') {
-        showErrorDialog('The password provided is too weak.');
+        showErrorDialog('Password Terlalu Lemah.');
       } else if (e.code == 'email-already-in-use') {
-        showErrorDialog('The account already exists for that email.');
+        showErrorDialog('Akun Telah Terdaftar dengan Email Tersebut.');
       } else {
-        showErrorDialog('An error occurred. Please try again later.');
+        showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
       }
     }
   }
@@ -89,7 +88,7 @@ class _CreateAccountState extends State<CreateAccount> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Error'),
+          title: const Text('Hayu Error'),
           content: Text(errorMessage),
           actions: <Widget>[
             TextButton(

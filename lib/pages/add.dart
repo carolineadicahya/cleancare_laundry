@@ -1,8 +1,17 @@
+// import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+// import 'package:CleanCare/pages/setting.dart'; // Import halaman pengaturan (ProfilePage)
 import '../utils/constants.dart';
 
-class AddLaundry extends StatelessWidget {
-  // Define the selected outlet
+class AddLaundry extends StatefulWidget {
+  const AddLaundry({Key? key}) : super(key: key);
+
+  @override
+  _AddLaundryState createState() => _AddLaundryState();
+}
+
+// Define the selected outlet
+class _AddLaundryState extends State<AddLaundry> {
   final Map<String, dynamic> selectedOutlet = {
     'name': 'Laundry CleanCare',
     'description':
@@ -24,8 +33,6 @@ class AddLaundry extends StatelessWidget {
       {'name': 'Fragrance (Woody)', 'price': 5000, 'quantity': 0},
     ],
   };
-
-  AddLaundry({super.key});
 
   @override
   Widget build(BuildContext context) {
