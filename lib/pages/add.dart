@@ -11,10 +11,9 @@ class AddLaundry extends StatefulWidget {
   _AddLaundryState createState() => _AddLaundryState();
 }
 
-// Define the selected outlet
 class _AddLaundryState extends State<AddLaundry> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // int _packages = 0;
+  int _packages = 0;
 
   final Map<String, dynamic> selectedOutlet = {
     'name': 'Laundry CleanCare',
@@ -203,6 +202,12 @@ class _OutletBoxState extends State<OutletBox> {
               return PackageWidget(package: package);
             }).toList(),
           ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {});
+            },
+            child: const Text('Order'),
+          )
         ],
       ),
     );
@@ -235,7 +240,7 @@ class _PackageWidgetState extends State<PackageWidget> {
               ),
             ),
             Text(
-              'Rp${(widget.package['price'] * quantity).toStringAsFixed(2)}',
+              'Rp${(widget.package['price'] * quantity).toStringAsFixed(0)}',
               style: const TextStyle(
                 fontSize: 14.0,
               ),
@@ -254,7 +259,11 @@ class _PackageWidgetState extends State<PackageWidget> {
                   }
                 });
               },
-              child: const Text('-'),
+              child: Icon(
+                Icons.remove_rounded,
+                size: 24,
+              ),
+              style: ElevatedButton.styleFrom(shape: CircleBorder()),
             ),
             const SizedBox(
                 width: 16.0), // Add some space between buttons and quantity
@@ -267,7 +276,11 @@ class _PackageWidgetState extends State<PackageWidget> {
                   quantity++;
                 });
               },
-              child: const Text('+'),
+              child: Icon(
+                Icons.add_rounded,
+                size: 24,
+              ),
+              style: ElevatedButton.styleFrom(shape: CircleBorder()),
             ),
           ],
         ),
