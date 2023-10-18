@@ -1,5 +1,6 @@
 // import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:CleanCare/pages/setting.dart'; // Import halaman pengaturan (ProfilePage)
 import '../utils/constants.dart';
 
@@ -12,6 +13,9 @@ class AddLaundry extends StatefulWidget {
 
 // Define the selected outlet
 class _AddLaundryState extends State<AddLaundry> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // int _packages = 0;
+
   final Map<String, dynamic> selectedOutlet = {
     'name': 'Laundry CleanCare',
     'description':

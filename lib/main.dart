@@ -3,12 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:CleanCare/firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:CleanCare/pages/add.dart';
 import 'package:CleanCare/pages/create_acc.dart';
 import 'package:CleanCare/pages/dashboard.dart';
 import 'package:CleanCare/pages/home.dart';
 import 'package:CleanCare/pages/login.dart';
 import 'package:CleanCare/pages/single_order.dart';
+import 'package:CleanCare/pages/layout.dart';
 import 'package:CleanCare/utils/constants.dart';
 
 Future<void> main() async {
@@ -58,13 +58,13 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (BuildContext context) {
         return const CreateAccount();
       });
+    case "/layout":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return const LayoutPages();
+      });
     case "/dashboard":
       return MaterialPageRoute(builder: (BuildContext context) {
         return const Dashboard();
-      });
-    case "/addlaundry":
-      return MaterialPageRoute(builder: (BuildContext context) {
-        return AddLaundry();
       });
     case "/single-order":
       return MaterialPageRoute(builder: (BuildContext context) {

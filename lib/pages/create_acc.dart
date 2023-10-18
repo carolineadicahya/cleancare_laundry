@@ -1,11 +1,10 @@
+import 'package:CleanCare/pages/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:CleanCare/pages/dashboard.dart';
 import 'package:CleanCare/pages/home.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-// import 'package:CleanCare/pages/dashboard.dart';
 import 'package:CleanCare/utils/constants.dart';
 import 'package:CleanCare/widgets/app_button.dart';
 import 'package:CleanCare/widgets/input_widget.dart';
@@ -63,7 +62,7 @@ class _CreateAccountState extends State<CreateAccount> {
       if (user != null && user.emailVerified) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Dashboard()),
+          MaterialPageRoute(builder: (context) => const LayoutPages()),
         );
       } else {
         Navigator.pushReplacement(

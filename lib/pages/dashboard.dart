@@ -1,12 +1,8 @@
-import 'package:CleanCare/pages/map.dart';
 import 'package:CleanCare/pages/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:CleanCare/pages/add.dart';
-import 'package:CleanCare/pages/setting.dart'; // Import halaman pengaturan (ProfilePage)
 import '../utils/constants.dart';
 import '../widgets/latest_orders.dart';
 import '../widgets/location_slider.dart';
@@ -19,9 +15,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  // Track active index
-  int activeIndex = 0;
-
   String fullName = "Pelanggan"; // Inisialisasi nama default
 
   @override
@@ -47,75 +40,10 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  int activeIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Constants.scaffoldBackgroundColor,
-        buttonBackgroundColor: Constants.primaryColor,
-        items: [
-          Icon(
-            Icons.home,
-            size: 30.0,
-            color: activeIndex == 0 ? Colors.white : const Color(0xFFC8C9CB),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MapPage(),
-                ),
-              );
-            },
-            child: Icon(
-              Icons.pin_drop_rounded,
-              size: 30.0,
-              color: activeIndex == 1 ? Colors.white : const Color(0xFFC8C9CB),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddLaundry(),
-                ),
-              );
-            },
-            child: Icon(
-              Icons.add,
-              size: 30.0,
-              color: activeIndex == 2 ? Colors.white : const Color(0xFFC8C9CB),
-            ),
-          ),
-          Icon(
-            Icons.history_rounded,
-            size: 30.0,
-            color: activeIndex == 3 ? Colors.white : const Color(0xFFC8C9CB),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfilePage(),
-                ),
-              );
-            },
-            child: Icon(
-              Icons.person_pin_rounded,
-              size: 30.0,
-              color: activeIndex == 4 ? Colors.white : const Color(0xFFC8C9CB),
-            ),
-          ),
-        ],
-        onTap: (index) {
-          setState(() {
-            activeIndex = index;
-          });
-        },
-      ),
       backgroundColor: Constants.primaryColor,
       body: Stack(
         clipBehavior: Clip.none,

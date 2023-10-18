@@ -1,6 +1,6 @@
+import 'package:CleanCare/pages/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:CleanCare/pages/dashboard.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../controller/auth.dart';
@@ -50,9 +50,9 @@ class _LoginState extends State<Login> {
 
       User? user = userCredential.user;
       if (user != null && user.emailVerified) {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const Dashboard()),
+          MaterialPageRoute(builder: (context) => const LayoutPages()),
         );
       } else {
         showErrorDialog(
