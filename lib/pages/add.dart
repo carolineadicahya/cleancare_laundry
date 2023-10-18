@@ -1,7 +1,5 @@
-// import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:CleanCare/pages/setting.dart'; // Import halaman pengaturan (ProfilePage)
 import '../utils/constants.dart';
 
 class AddLaundry extends StatefulWidget {
@@ -13,7 +11,6 @@ class AddLaundry extends StatefulWidget {
 
 class _AddLaundryState extends State<AddLaundry> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  int _packages = 0;
 
   final Map<String, dynamic> selectedOutlet = {
     'name': 'Laundry CleanCare',
@@ -37,6 +34,72 @@ class _AddLaundryState extends State<AddLaundry> {
     ],
   };
 
+  Future<void> _takeOrder() async {
+    try {
+      // Membuat dokumen order baru dengan auto-incremented ID
+      final orderCollection = _firestore.collection('order_db');
+      final orderDocument = await orderCollection.add({
+        'outletName': selectedOutlet['name'],
+        'orderDate': FieldValue.serverTimestamp(),
+        'packages': (selectedOutlet['packages'] as List<Map<String, dynamic>>)
+            .where((Map<String, dynamic> package) => package['quantity'] > 0)
+            .toList(),
+      });
+
+      // Menyimpan paket yang dipesan dalam sub-koleksi "packages"
+      final packagesCollection = orderDocument.collection('packages');
+      final orderedPackages =
+          (selectedOutlet['packages'] as List<Map<String, dynamic>>)
+              .where((Map<String, dynamic> package) => package['quantity'] > 0)
+              .toList();
+
+      for (var package in orderedPackages) {
+        await packagesCollection.add({
+          'name': package['name'],
+          'price': package['price'],
+          'quantity': package['quantity'],
+        });
+      }
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Order Berhasil Ditambahkan'),
+            content: Text('ID Order: ${orderDocument.id}'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Tutup'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (error) {
+      // Menampilkan popup dialog saat terjadi kesalahan
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Terjadi kesalahan saat menambahkan order: $error'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Tutup'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,8 +114,7 @@ class _AddLaundryState extends State<AddLaundry> {
               child: Opacity(
                 opacity: 0.3,
                 child: Image.asset(
-                  "assets/images/washing_machine_illustration.png",
-                ),
+                    "assets/images/washing_machine_illustration.png"),
               ),
             ),
             SingleChildScrollView(
@@ -102,6 +164,8 @@ class _AddLaundryState extends State<AddLaundry> {
                       openingHours: selectedOutlet['openingHours'] ?? '',
                       contact: selectedOutlet['contact'] ?? '',
                       packages: selectedOutlet['packages'] ?? [],
+                      takeOrder:
+                          _takeOrder, // Mengirim fungsi _takeOrder ke OutletBox
                     ),
                     const SizedBox(
                       height: 20.0,
@@ -124,15 +188,18 @@ class OutletBox extends StatefulWidget {
   final String openingHours;
   final String contact;
   final List<Map<String, dynamic>> packages;
+  final VoidCallback
+      takeOrder; // Fungsi _takeOrder yang diteruskan dari _AddLaundryState
 
   const OutletBox({
-    super.key,
+    Key? key,
     required this.name,
     required this.description,
     required this.address,
     required this.openingHours,
     required this.contact,
     required this.packages,
+    required this.takeOrder, // Tambahkan takeOrder ke konstruktor
   });
 
   @override
@@ -203,9 +270,8 @@ class _OutletBoxState extends State<OutletBox> {
             }).toList(),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() {});
-            },
+            onPressed: widget
+                .takeOrder, // Menggunakan takeOrder yang diteruskan dari _AddLaundryState
             child: const Text('Order'),
           )
         ],
@@ -217,7 +283,7 @@ class _OutletBoxState extends State<OutletBox> {
 class PackageWidget extends StatefulWidget {
   final Map<String, dynamic> package;
 
-  const PackageWidget({super.key, required this.package});
+  const PackageWidget({Key? key, required this.package}) : super(key: key);
 
   @override
   _PackageWidgetState createState() => _PackageWidgetState();
@@ -248,8 +314,7 @@ class _PackageWidgetState extends State<PackageWidget> {
           ],
         ),
         Row(
-          mainAxisAlignment:
-              MainAxisAlignment.center, // Align buttons at the center
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () {
@@ -265,11 +330,9 @@ class _PackageWidgetState extends State<PackageWidget> {
               ),
               style: ElevatedButton.styleFrom(shape: CircleBorder()),
             ),
-            const SizedBox(
-                width: 16.0), // Add some space between buttons and quantity
+            const SizedBox(width: 16.0),
             Text(quantity.toString(), style: const TextStyle(fontSize: 18.0)),
-            const SizedBox(
-                width: 16.0), // Add some space between quantity and buttons
+            const SizedBox(width: 16.0),
             ElevatedButton(
               onPressed: () {
                 setState(() {
