@@ -50,14 +50,37 @@ class Auth {
       User? user = _firebaseAuth.currentUser;
       if (user != null) {
         final userDoc = await _firestore.collection("user").doc(user.uid).get();
-        if (!userDoc.exists) {
-          // Jika pengguna tidak ditemukan di Firestore, Anda bisa melakukan sesuatu di sini jika diperlukan.
-        }
+        if (!userDoc.exists) {}
+
+        final adminSnapshot =
+            await _firestore.collection("admin").doc(user.uid).get();
+        if (adminSnapshot.exists) {}
       }
     } on FirebaseAuthException {
       rethrow;
     }
   }
+
+  // Future<bool> checkAdminCredentials(String email, String password) async {
+  //   try {
+  //     final adminSnapshot =
+  //         await _firestore.collection("admin").doc(email).get();
+
+  //     if (adminSnapshot.exists) {
+  //       final adminData = adminSnapshot.data() as Map<String, dynamic>;
+  //       final storedEmail = adminData['email'];
+  //       final storedPassword = adminData['password'];
+
+  //       if (storedEmail == email && storedPassword == password) {
+  //         return true; // Email dan password cocok dengan admin.
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("Error checking admin credentials: $e");
+  //   }
+
+  //   return false; // Kredensial admin tidak valid.
+  // }
 
   Future<void> sendPasswordResetEmail(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);

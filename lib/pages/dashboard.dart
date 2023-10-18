@@ -90,7 +90,7 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
           Icon(
-            Icons.favorite,
+            Icons.history_rounded,
             size: 30.0,
             color: activeIndex == 3 ? Colors.white : const Color(0xFFC8C9CB),
           ),
@@ -104,7 +104,7 @@ class _DashboardState extends State<Dashboard> {
               );
             },
             child: Icon(
-              Icons.settings,
+              Icons.person_pin_rounded,
               size: 30.0,
               color: activeIndex == 4 ? Colors.white : const Color(0xFFC8C9CB),
             ),
@@ -252,7 +252,6 @@ class _DashboardState extends State<Dashboard> {
                         SizedBox(
                           height: ScreenUtil().setHeight(100.0),
                           child: const Center(
-                            // lets make a widget for the cards
                             child: LocationSlider(),
                           ),
                         ),
