@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../utils/constants.dart';
+
+import '../../utils/constants.dart';
 
 class SingleOrder extends StatefulWidget {
   const SingleOrder({super.key});

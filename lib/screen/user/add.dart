@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../utils/constants.dart';
+import '../../utils/constants.dart';
 
 class AddLaundry extends StatefulWidget {
-  const AddLaundry({Key? key}) : super(key: key);
+  const AddLaundry({super.key});
 
   @override
   _AddLaundryState createState() => _AddLaundryState();
@@ -34,70 +34,116 @@ class _AddLaundryState extends State<AddLaundry> {
     ],
   };
 
+  List<Map<String, dynamic>> package = [
+    {'name': 'Wash & Fold', 'price': 10000, 'quantity': 0},
+    {'name': 'Ironing', 'price': 5000, 'quantity': 0},
+    {'name': 'Fragrance', 'price': 2000, 'quantity': 0},
+    {'name': 'Complete Wash', 'price': 13000, 'quantity': 0},
+    {'name': 'Express Wash', 'price': 15000, 'quantity': 0},
+    {'name': 'Wash Only', 'price': 7000, 'quantity': 0},
+    {'name': 'Ironing with Fragrance', 'price': 7000, 'quantity': 0},
+    {'name': 'Ironing without Fragrance', 'price': 5000, 'quantity': 0},
+    {'name': 'Fragrance (Soft)', 'price': 5000, 'quantity': 0},
+    {'name': 'Fragrance (Flowerist)', 'price': 7000, 'quantity': 0},
+    {'name': 'Fragrance (Woody)', 'price': 5000, 'quantity': 0},
+  ];
+
   Future<void> _takeOrder() async {
-    try {
-      // Membuat dokumen order baru dengan auto-incremented ID
-      final orderCollection = _firestore.collection('order_db');
-      final orderDocument = await orderCollection.add({
-        'outletName': selectedOutlet['name'],
-        'orderDate': FieldValue.serverTimestamp(),
-        'packages': (selectedOutlet['packages'] as List<Map<String, dynamic>>)
-            .where((Map<String, dynamic> package) => package['quantity'] > 0)
-            .toList(),
-      });
+    List<Map<String, dynamic>> data =
+        package.where((i) => i['quantity'] > 0).toList();
 
-      // Menyimpan paket yang dipesan dalam sub-koleksi "packages"
-      final packagesCollection = orderDocument.collection('packages');
-      final orderedPackages =
-          (selectedOutlet['packages'] as List<Map<String, dynamic>>)
-              .where((Map<String, dynamic> package) => package['quantity'] > 0)
-              .toList();
+    print(data);
+    // for (var i in ) {
+    //   if (i['quantity'] > 0) {
+    //     dataPackages.add({
+    //       'name': i['name'],
+    //       'price': i['price'],
+    //       'quantity': i['quantity']
+    //     });
+    //   }
+    // }
 
-      for (var package in orderedPackages) {
-        await packagesCollection.add({
-          'name': package['name'],
-          'price': package['price'],
-          'quantity': package['quantity'],
-        });
-      }
+    // var dataPackages = (selectedOutlet['packages'] as List);
 
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Order Berhasil Ditambahkan'),
-            content: Text('ID Order: ${orderDocument.id}'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Tutup'),
-              ),
-            ],
-          );
-        },
-      );
-    } catch (error) {
-      // Menampilkan popup dialog saat terjadi kesalahan
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Terjadi kesalahan saat menambahkan order: $error'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Tutup'),
-              ),
-            ],
-          );
-        },
-      );
-    }
+    // print(dataPackages);
+
+    // for (var i in selectedOutlet['packages']) {
+    //   if (i['quantity'] > 0) {
+    //     packages.add(i);
+    //   }
+    // }
+
+    // Map<String, dynamic> body = {
+    //   "outletName": selectedOutlet['name'],
+    //   "orderDate": FieldValue.serverTimestamp(),
+    //   "packages": selectedOutlet['packages'],
+    // };
+
+    // try {
+    //   // Membuat dokumen order baru dengan auto-incremented ID
+    //   final orderCollection = _firestore.collection('order_db');
+    //   final orderDocument = await orderCollection.add({
+    //     'outletName': selectedOutlet['name'],
+    //     'orderDate': FieldValue.serverTimestamp(),
+    //     'packages': (selectedOutlet['packages'] as List<Map<String, dynamic>>)
+    //         .where((Map<String, dynamic> package) => package['quantity'] > 0)
+    //         .toList(),
+    //   });
+
+    //   // baiknya ..
+
+    //   // Menyimpan paket yang dipesan dalam sub-koleksi "packages"
+    //   final packagesCollection = orderDocument.collection('packages');
+    //   final orderedPackages =
+    //       (selectedOutlet['packages'] as List<Map<String, dynamic>>)
+    //           .where((Map<String, dynamic> package) => package['quantity'] > 0)
+    //           .toList();
+
+    //   for (var package in orderedPackages) {
+    //     await packagesCollection.add({
+    //       'name': package['name'],
+    //       'price': package['price'],
+    //       'quantity': package['quantity'],
+    //     });
+    //   }
+
+    //   showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return AlertDialog(
+    //         title: Text('Order Berhasil Ditambahkan'),
+    //         content: Text('ID Order: ${orderDocument.id}'),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             },
+    //             child: Text('Tutup'),
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   );
+    // } catch (error) {
+    //   // Menampilkan popup dialog saat terjadi kesalahan
+    //   showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return AlertDialog(
+    //         title: Text('Error'),
+    //         content: Text('Terjadi kesalahan saat menambahkan order: $error'),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             },
+    //             child: Text('Tutup'),
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   );
+    // }
   }
 
   @override
@@ -163,7 +209,7 @@ class _AddLaundryState extends State<AddLaundry> {
                       address: selectedOutlet['address'] ?? '',
                       openingHours: selectedOutlet['openingHours'] ?? '',
                       contact: selectedOutlet['contact'] ?? '',
-                      packages: selectedOutlet['packages'] ?? [],
+                      packages: package,
                       takeOrder:
                           _takeOrder, // Mengirim fungsi _takeOrder ke OutletBox
                     ),
@@ -192,7 +238,7 @@ class OutletBox extends StatefulWidget {
       takeOrder; // Fungsi _takeOrder yang diteruskan dari _AddLaundryState
 
   const OutletBox({
-    Key? key,
+    super.key,
     required this.name,
     required this.description,
     required this.address,
@@ -266,7 +312,12 @@ class _OutletBoxState extends State<OutletBox> {
           // Display laundry packages
           Column(
             children: widget.packages.map((package) {
-              return PackageWidget(package: package);
+              return PackageWidget(
+                  package: package,
+                  onChangeIncrement: (value) {
+                    // widget.packages['quantity'] = value;
+                    print(value);
+                  });
             }).toList(),
           ),
           ElevatedButton(
@@ -282,8 +333,12 @@ class _OutletBoxState extends State<OutletBox> {
 
 class PackageWidget extends StatefulWidget {
   final Map<String, dynamic> package;
-
-  const PackageWidget({Key? key, required this.package}) : super(key: key);
+  final Function onChangeIncrement;
+  const PackageWidget({
+    super.key,
+    required this.package,
+    required this.onChangeIncrement(val),
+  });
 
   @override
   _PackageWidgetState createState() => _PackageWidgetState();
@@ -319,16 +374,18 @@ class _PackageWidgetState extends State<PackageWidget> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
+                  // yang di cari adalah list package di atas
                   if (quantity > 0) {
                     quantity--;
                   }
+                  // kemudian set quantitiyny berdasarkan object yang ada di variable pakacke
                 });
               },
-              child: Icon(
+              style: ElevatedButton.styleFrom(shape: const CircleBorder()),
+              child: const Icon(
                 Icons.remove_rounded,
                 size: 24,
               ),
-              style: ElevatedButton.styleFrom(shape: CircleBorder()),
             ),
             const SizedBox(width: 16.0),
             Text(quantity.toString(), style: const TextStyle(fontSize: 18.0)),
@@ -338,12 +395,13 @@ class _PackageWidgetState extends State<PackageWidget> {
                 setState(() {
                   quantity++;
                 });
+                widget.onChangeIncrement(quantity);
               },
-              child: Icon(
+              style: ElevatedButton.styleFrom(shape: const CircleBorder()),
+              child: const Icon(
                 Icons.add_rounded,
                 size: 24,
               ),
-              style: ElevatedButton.styleFrom(shape: CircleBorder()),
             ),
           ],
         ),

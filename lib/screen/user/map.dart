@@ -16,8 +16,8 @@ class MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   final Location location = Location();
-  Set<Marker> _markers = Set<Marker>();
-  Set<Polyline> _polylines = Set<Polyline>();
+  final Set<Marker> _markers = <Marker>{};
+  final Set<Polyline> _polylines = <Polyline>{};
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints = PolylinePoints();
 
@@ -35,23 +35,23 @@ class MapPageState extends State<MapPage> {
   void getCurrentLocation() async {
     try {
       final currentLocation = await location.getLocation();
-      final LatLng destination = LatLng(-1.2560436592076922, 116.8360665);
+      const LatLng destination = LatLng(-1.2560436592076922, 116.8360665);
 
       setState(() {
         _markers.add(
           Marker(
-            markerId: MarkerId('current'),
+            markerId: const MarkerId('current'),
             position: LatLng(
               currentLocation.latitude ?? 0.0,
               currentLocation.longitude ?? 0.0,
             ),
-            infoWindow: InfoWindow(
+            infoWindow: const InfoWindow(
               title: 'Current Location',
             ),
           ),
         );
         _markers.add(
-          Marker(
+          const Marker(
             markerId: MarkerId('destination'),
             position: destination,
             infoWindow: InfoWindow(
@@ -92,16 +92,16 @@ class MapPageState extends State<MapPage> {
     );
 
     if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
+      for (var point in result.points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
+      }
     }
 
     setState(() {
       _polylines.add(
         Polyline(
           width: 5,
-          polylineId: PolylineId('polyline'),
+          polylineId: const PolylineId('polyline'),
           color: Colors.blue,
           points: polylineCoordinates,
         ),
@@ -136,7 +136,7 @@ class MapPageState extends State<MapPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          final LatLng destination = LatLng(-1.2560436592076922, 116.8360665);
+          const LatLng destination = LatLng(-1.2560436592076922, 116.8360665);
           _openGoogleMaps(destination);
         },
         label: const Text('Petunjuk Arah'),

@@ -1,11 +1,11 @@
-import 'package:CleanCare/pages/login.dart';
+import 'package:CleanCare/screen/user/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../utils/constants.dart';
-import '../widgets/latest_orders.dart';
-import '../widgets/location_slider.dart';
+import '../../utils/constants.dart';
+import '../../widgets/latest_orders.dart';
+import '../../widgets/location_slider.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -28,11 +28,11 @@ class _DashboardState extends State<Dashboard> {
     if (user != null) {
       // Ambil data nama dari Firestore
       final userData = await FirebaseFirestore.instance
-          .collection('user')
+          .collection('profil')
           .doc(user.uid)
           .get();
       if (userData.exists) {
-        final userName = userData['Full Name'];
+        final userName = userData['name'];
         setState(() {
           fullName = userName ?? "Pelanggan";
         });
@@ -96,7 +96,7 @@ class _DashboardState extends State<Dashboard> {
                                       builder: (context) => const Login()),
                                 );
                               },
-                              child: Icon(
+                              child: const Icon(
                                 IconData(0xf88b, fontFamily: 'MaterialIcons'),
                                 color: Colors.white,
                                 size: 24.0,

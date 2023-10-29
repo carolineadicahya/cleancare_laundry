@@ -3,12 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:CleanCare/firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:CleanCare/pages/create_acc.dart';
-import 'package:CleanCare/pages/dashboard.dart';
-import 'package:CleanCare/pages/home.dart';
-import 'package:CleanCare/pages/login.dart';
-import 'package:CleanCare/pages/single_order.dart';
-import 'package:CleanCare/pages/layout.dart';
+import 'package:CleanCare/screen/user/create_acc.dart';
+import 'package:CleanCare/screen/user/dashboard.dart';
+import 'package:CleanCare/screen/user/home.dart';
+import 'package:CleanCare/screen/user/login.dart';
+import 'package:CleanCare/screen/user/single_order.dart';
+import 'package:CleanCare/screen/user/layout.dart';
 import 'package:CleanCare/utils/constants.dart';
 
 Future<void> main() async {
@@ -49,6 +49,7 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
     case "/":
       return MaterialPageRoute(builder: (BuildContext context) {
         return const Home();
+        // return const LayoutPages();
       });
     case "/login":
       return MaterialPageRoute(builder: (BuildContext context) {

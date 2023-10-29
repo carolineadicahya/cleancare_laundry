@@ -1,8 +1,8 @@
-import 'package:CleanCare/pages/add.dart';
-import 'package:CleanCare/pages/dashboard.dart';
-import 'package:CleanCare/pages/history.dart';
-import 'package:CleanCare/pages/map.dart';
-import 'package:CleanCare/pages/setting.dart';
+import 'package:CleanCare/screen/user/add.dart';
+import 'package:CleanCare/screen/user/dashboard.dart';
+import 'package:CleanCare/screen/user/history.dart';
+import 'package:CleanCare/screen/user/map.dart';
+import 'package:CleanCare/screen/user/profil_setting.dart';
 import 'package:CleanCare/utils/constants.dart';
 import 'package:flutter/material.dart';
 

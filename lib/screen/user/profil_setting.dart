@@ -11,8 +11,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? user = FirebaseAuth.instance.currentUser;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late User user;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
@@ -30,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserProfile() async {
     user = _auth.currentUser!;
-    final userData = await _firestore.collection('user').doc(user.uid).get();
+    final userData = await _firestore.collection('user').doc(user!.uid).get();
     if (userData.exists) {
       setState(() {
         nameController.text = userData['Full Name'];
@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     final profileData =
-        await _firestore.collection('profil').doc(user.uid).get();
+        await _firestore.collection('profil').doc(user!.uid).get();
     if (profileData.exists) {
       setState(() {
         nameController.text = profileData['name'] ?? nameController.text;
@@ -86,10 +86,14 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () {
               setState(() {
                 isEditing = true;
-                nameController.text = name;
-                addressController.text = address;
-                phoneNumberController.text = phoneNumber;
-                emailController.text = email;
+                nameController.text =
+                    nameController.text; // Initialize with existing data
+                addressController.text =
+                    addressController.text; // Initialize with existing data
+                phoneNumberController.text =
+                    phoneNumberController.text; // Initialize with existing data
+                emailController.text =
+                    emailController.text; // Initialize with existing data
               });
             },
           ),
@@ -128,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   )
                 : Text(
-                    name,
+                    nameController.text, // Display the name from the controller
                     style: const TextStyle(fontSize: 16.0),
                   ),
             const SizedBox(height: 24.0),
@@ -148,7 +152,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   )
                 : Text(
-                    address,
+                    addressController
+                        .text, // Display the address from the controller
                     style: const TextStyle(fontSize: 16.0),
                   ),
             const SizedBox(height: 24.0),
@@ -168,7 +173,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   )
                 : Text(
-                    phoneNumber,
+                    phoneNumberController
+                        .text, // Display the phone number from the controller
                     style: const TextStyle(fontSize: 16.0),
                   ),
             const SizedBox(height: 24.0),
@@ -188,7 +194,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   )
                 : Text(
-                    email,
+                    emailController
+                        .text, // Display the email from the controller
                     style: const TextStyle(fontSize: 16.0),
                   ),
             const SizedBox(height: 24.0),
@@ -200,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _saveChanges() async {
-    final userDocRef = _firestore.collection('profil').doc(user.uid);
+    final userDocRef = _firestore.collection('profil').doc(user!.uid);
     await userDocRef.set({
       'name': nameController.text,
       'address': addressController.text,

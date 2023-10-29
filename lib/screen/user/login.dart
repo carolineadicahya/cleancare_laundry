@@ -1,93 +1,31 @@
-import 'package:CleanCare/pages/layout.dart';
+import 'package:CleanCare/screen/user/layout.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:CleanCare/pages/home.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:CleanCare/utils/constants.dart';
-import 'package:CleanCare/widgets/app_button.dart';
-import 'package:CleanCare/widgets/input_widget.dart';
 
-class CreateAccount extends StatefulWidget {
-  const CreateAccount({Key? key}) : super(key: key);
+import '../../controller/auth.dart';
+import '../../utils/constants.dart';
+import '../../widgets/app_button.dart';
+import '../../widgets/input_widget.dart';
+
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  _CreateAccountState createState() => _CreateAccountState();
+  _LoginState createState() => _LoginState();
 }
 
-class _CreateAccountState extends State<CreateAccount> {
-  final FirebaseFirestore db = FirebaseFirestore.instance;
-  final TextEditingController _controllerFullName = TextEditingController();
+class _LoginState extends State<Login> {
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-
-  Future<void> createUserWithEmailAndPassword() async {
-    context.loaderOverlay.show();
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _controllerEmail.text,
-        password: _controllerPassword.text,
-      );
-
-      User? user = userCredential.user;
-      if (user != null) {
-        await user.sendEmailVerification();
-        await FirebaseFirestore.instance.collection('user').add({
-          'Full Name': _controllerFullName.text,
-          'Email': _controllerEmail.text,
-          'Password': _controllerPassword.text,
-        });
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Email Verifikasi Terkirim'),
-              content: const Text(
-                  'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-
-      if (user != null && user.emailVerified) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LayoutPages()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Home()),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      context.loaderOverlay.hide();
-      if (e.code == 'weak-password') {
-        showErrorDialog('Password Terlalu Lemah.');
-      } else if (e.code == 'email-already-in-use') {
-        showErrorDialog('Akun Telah Terdaftar dengan Email Tersebut.');
-      } else {
-        showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
-      }
-    }
-  }
 
   void showErrorDialog(String errorMessage) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Hayu Error'),
+          title: const Text('Error'),
           content: Text(errorMessage),
           actions: <Widget>[
             TextButton(
@@ -100,6 +38,37 @@ class _CreateAccountState extends State<CreateAccount> {
         );
       },
     );
+  }
+
+  Future<void> signIn() async {
+    context.loaderOverlay.show();
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
+
+      User? user = userCredential.user;
+      if (user != null && user.emailVerified) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LayoutPages()),
+        );
+      } else {
+        showErrorDialog(
+            'Email belum diverifikasi. Silakan periksa email Anda.');
+      }
+    } on FirebaseAuthException catch (e) {
+      context.loaderOverlay.hide();
+      if (e.code == 'wrong-password') {
+        showErrorDialog('Password yang Anda masukkan salah.');
+      } else if (e.code == 'user-not-found') {
+        showErrorDialog('Akun dengan email tersebut tidak ditemukan.');
+      } else {
+        showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
+      }
+    }
   }
 
   @override
@@ -158,7 +127,7 @@ class _CreateAccountState extends State<CreateAccount> {
                                 height: 20.0,
                               ),
                               Text(
-                                "Create an Account",
+                                "Log In",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
@@ -193,14 +162,6 @@ class _CreateAccountState extends State<CreateAccount> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 InputWidget(
-                                  topLabel: "Full Name",
-                                  controller: _controllerFullName,
-                                  hintText: "Enter your full name",
-                                ),
-                                const SizedBox(
-                                  height: 25.0,
-                                ),
-                                InputWidget(
                                   topLabel: "Email",
                                   controller: _controllerEmail,
                                   hintText: "Enter your email address",
@@ -215,12 +176,67 @@ class _CreateAccountState extends State<CreateAccount> {
                                   hintText: "Enter your password",
                                 ),
                                 const SizedBox(
+                                  height: 15.0,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    final email = _controllerEmail.text;
+                                    final newPassword =
+                                        _controllerPassword.text;
+
+                                    if (email.isNotEmpty) {
+                                      try {
+                                        await Auth()
+                                            .resetPasswordAndSaveToFirestore(
+                                          email,
+                                          newPassword,
+                                        );
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title:
+                                                  const Text('Reset Password'),
+                                              content: const Text(
+                                                  'An email to reset your password has been sent.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } catch (e) {
+                                        showErrorDialog(
+                                            'Error sending password reset email: $e');
+                                      }
+                                    } else {
+                                      showErrorDialog(
+                                          'Please enter your email address to reset your password.');
+                                    }
+                                  },
+                                  child: const Text(
+                                    "Forgot Password?",
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: Constants.primaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
                                   height: 20.0,
                                 ),
                                 AppButton(
-                                    type: ButtonType.PRIMARY,
-                                    text: "Create Account",
-                                    onPressed: createUserWithEmailAndPassword)
+                                  type: ButtonType.PRIMARY,
+                                  text: "Log In",
+                                  onPressed: signIn,
+                                )
                               ],
                             ),
                           ),
