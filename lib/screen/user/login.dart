@@ -1,3 +1,4 @@
+import 'package:CleanCare/screen/owner/navbar.dart';
 import 'package:CleanCare/screen/user/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,11 +50,21 @@ class _LoginState extends State<Login> {
         password: _controllerPassword.text,
       );
 
-      User? user = userCredential.user;
+      User? user = FirebaseAuth.instance.currentUser;
       if (user != null && user.emailVerified) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const LayoutPages()),
+        );
+      } else {
+        showErrorDialog(
+            'Email belum diverifikasi. Silakan periksa email Anda.');
+      }
+      User? admin = userCredential.user;
+      if (admin != null && admin.emailVerified) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LayoutAdmin()),
         );
       } else {
         showErrorDialog(

@@ -52,9 +52,9 @@ class Auth {
         final userDoc = await _firestore.collection("user").doc(user.uid).get();
         if (!userDoc.exists) {}
 
-        final adminSnapshot =
+        final adminDoc =
             await _firestore.collection("admin").doc(user.uid).get();
-        if (adminSnapshot.exists) {}
+        if (!adminDoc.exists) {}
       }
     } on FirebaseAuthException {
       rethrow;
@@ -78,7 +78,6 @@ class Auth {
   //   } catch (e) {
   //     print("Error checking admin credentials: $e");
   //   }
-
   //   return false; // Kredensial admin tidak valid.
   // }
 
