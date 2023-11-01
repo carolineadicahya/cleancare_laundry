@@ -1,4 +1,6 @@
 import 'package:CleanCare/screen/owner/dashboard_admin.dart';
+import 'package:CleanCare/screen/owner/order_user.dart';
+import 'package:CleanCare/screen/owner/service.dart';
 import 'package:CleanCare/utils/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -13,8 +15,9 @@ class _LayoutAdminState extends State<LayoutAdmin> {
   int _selectedIndex = 0;
 
   final List<Widget> _widgetOptions = <Widget>[
-    DashboardAdmin(), 
-    
+    DashboardAdmin(),
+    OrderUser(),
+    LaundryServicePage()
   ];
 
   void _onItemTapped(int index) {

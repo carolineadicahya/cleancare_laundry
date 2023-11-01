@@ -14,12 +14,12 @@ class LaundryService {
   }
 
   // ADD: tambah layanan
-  Future<void> addPeraturan(Map<String, dynamic> body, String ServiceId) {
+  Future<void> addLayanan(Map<String, dynamic> body, String ServiceId) {
     return db.doc(ServiceId).collection('layanan').add(body);
   }
 
   // DELETE: hapus layanan
-  Future<void> deletePeraturan(String ServiceId, String id) {
+  Future<void> deleteLayanan(String ServiceId, String id) {
     return db.doc(ServiceId).collection('layanan').doc(id).delete();
   }
 }

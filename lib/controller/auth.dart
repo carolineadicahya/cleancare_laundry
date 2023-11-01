@@ -1,5 +1,7 @@
+// import 'package:CleanCare/screen/owner/navbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -41,6 +43,7 @@ class Auth {
   Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,
+    required BuildContext context,
   }) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
@@ -50,36 +53,15 @@ class Auth {
       User? user = _firebaseAuth.currentUser;
       if (user != null) {
         final userDoc = await _firestore.collection("user").doc(user.uid).get();
-        if (!userDoc.exists) {}
-
         final adminDoc =
             await _firestore.collection("admin").doc(user.uid).get();
-        if (!adminDoc.exists) {}
+        if (userDoc.exists) {
+        } else if (adminDoc.exists) {}
       }
     } on FirebaseAuthException {
       rethrow;
     }
   }
-
-  // Future<bool> checkAdminCredentials(String email, String password) async {
-  //   try {
-  //     final adminSnapshot =
-  //         await _firestore.collection("admin").doc(email).get();
-
-  //     if (adminSnapshot.exists) {
-  //       final adminData = adminSnapshot.data() as Map<String, dynamic>;
-  //       final storedEmail = adminData['email'];
-  //       final storedPassword = adminData['password'];
-
-  //       if (storedEmail == email && storedPassword == password) {
-  //         return true; // Email dan password cocok dengan admin.
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Error checking admin credentials: $e");
-  //   }
-  //   return false; // Kredensial admin tidak valid.
-  // }
 
   Future<void> sendPasswordResetEmail(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);

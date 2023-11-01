@@ -1,8 +1,8 @@
 import 'package:CleanCare/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/screen/user/create_acc.dart';
-import '../../utils/helper.dart';
-import '../../widgets/app_button.dart';
+import '../utils/helper.dart';
+import '../widgets/app_button.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});

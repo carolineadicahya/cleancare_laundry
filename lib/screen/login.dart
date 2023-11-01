@@ -1,14 +1,15 @@
+// import 'package:CleanCare/screen/owner/navbar.dart';
 import 'package:CleanCare/screen/owner/navbar.dart';
 import 'package:CleanCare/screen/user/layout.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
-import '../../controller/auth.dart';
-import '../../utils/constants.dart';
-import '../../widgets/app_button.dart';
-import '../../widgets/input_widget.dart';
+import '../controller/auth.dart';
+import '../utils/constants.dart';
+import '../widgets/app_button.dart';
+import '../widgets/input_widget.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -44,6 +45,7 @@ class _LoginState extends State<Login> {
   Future<void> signIn() async {
     context.loaderOverlay.show();
     try {
+      // ignore: unused_local_variable
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _controllerEmail.text,
@@ -52,20 +54,8 @@ class _LoginState extends State<Login> {
 
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null && user.emailVerified) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const LayoutPages()),
-        );
-      } else {
-        showErrorDialog(
-            'Email belum diverifikasi. Silakan periksa email Anda.');
-      }
-      User? admin = userCredential.user;
-      if (admin != null && admin.emailVerified) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const LayoutAdmin()),
-        );
+        // Panggil checkRole untuk memeriksa peran pengguna setelah login
+        checkRole(context);
       } else {
         showErrorDialog(
             'Email belum diverifikasi. Silakan periksa email Anda.');
@@ -79,6 +69,50 @@ class _LoginState extends State<Login> {
       } else {
         showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
       }
+    }
+  }
+
+  void checkRole(BuildContext context) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection("user")
+          .doc(user.uid)
+          .get();
+
+      DocumentSnapshot adminDoc = await FirebaseFirestore.instance
+          .collection("admin")
+          .doc(user.uid)
+          .get();
+
+      if (userDoc.exists) {
+        // User document exists, indicating a regular user.
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LayoutPages()),
+        );
+      } else if (adminDoc.exists) {
+        // Admin document exists, indicating an admin.
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LayoutAdmin()),
+        );
+      } else {
+        // Neither user nor admin document exists, handle as needed.
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const LayoutPages()), // You may want to handle this case differently.
+        );
+      }
+    } else {
+      // User is not authenticated, so you may want to navigate to a login page.
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+      );
     }
   }
 
