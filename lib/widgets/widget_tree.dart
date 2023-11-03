@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controller/auth.dart';
-import 'package:CleanCare/screen/home.dart';
+import 'package:CleanCare/screen/page_awal.dart';
 import 'package:CleanCare/screen/login.dart';
 
 class WidgetTree extends StatefulWidget {

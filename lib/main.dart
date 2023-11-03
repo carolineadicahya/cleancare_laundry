@@ -1,15 +1,12 @@
-import 'package:CleanCare/screen/owner/navbar.dart';
+import 'package:CleanCare/screen/owner/layout_admin.dart';
+import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:CleanCare/firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'package:CleanCare/screen/user/create_acc.dart';
-// import 'package:CleanCare/screen/user/dashboard.dart';
-import 'package:CleanCare/screen/home.dart';
+import 'package:CleanCare/screen/page_awal.dart';
 import 'package:CleanCare/screen/login.dart';
-// import 'package:CleanCare/screen/user/single_order.dart';
-// import 'package:CleanCare/screen/user/layout.dart';
 import 'package:CleanCare/utils/constants.dart';
 
 Future<void> main() async {
@@ -56,22 +53,14 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (BuildContext context) {
         return const Login();
       });
-    // case "/create-acc":
-    //   return MaterialPageRoute(builder: (BuildContext context) {
-    //     return const CreateAccount();
-    //   });
-    // case "/layout":
-    //   return MaterialPageRoute(builder: (BuildContext context) {
-    //     return const LayoutPages();
-    //   });
-    // case "/dashboard":
-    //   return MaterialPageRoute(builder: (BuildContext context) {
-    //     return const Dashboard();
-    //   });
-    // case "/single-order":
-    //   return MaterialPageRoute(builder: (BuildContext context) {
-    //     return const SingleOrder();
-    //   });
+    case "/user":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return const LayoutPages();
+      });
+    case "/admin":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return const LayoutAdmin();
+      });
     default:
       return MaterialPageRoute(builder: (BuildContext context) {
         return const Home();

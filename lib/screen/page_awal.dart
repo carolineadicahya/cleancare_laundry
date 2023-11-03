@@ -1,6 +1,6 @@
 import 'package:CleanCare/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:CleanCare/screen/user/create_acc.dart';
+import 'package:CleanCare/screen/registrasi.dart';
 import '../utils/helper.dart';
 import '../widgets/app_button.dart';
 

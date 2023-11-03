@@ -1,23 +1,27 @@
-import 'package:CleanCare/screen/owner/dashboard_admin.dart';
-import 'package:CleanCare/screen/owner/order_user.dart';
-import 'package:CleanCare/screen/owner/service.dart';
+import 'package:CleanCare/screen/user/pilih_paket.dart';
+import 'package:CleanCare/screen/user/dashboard_user.dart';
+import 'package:CleanCare/screen/user/history.dart';
+import 'package:CleanCare/screen/user/map.dart';
+import 'package:CleanCare/screen/user/profil_setting.dart';
 import 'package:CleanCare/utils/constants.dart';
 import 'package:flutter/material.dart';
 
-class LayoutAdmin extends StatefulWidget {
-  const LayoutAdmin({super.key});
+class LayoutPages extends StatefulWidget {
+  const LayoutPages({super.key});
 
   @override
-  State<LayoutAdmin> createState() => _LayoutAdminState();
+  State<LayoutPages> createState() => _LayoutPagesState();
 }
 
-class _LayoutAdminState extends State<LayoutAdmin> {
+class _LayoutPagesState extends State<LayoutPages> {
   int _selectedIndex = 0;
 
   final List<Widget> _widgetOptions = <Widget>[
-    DashboardAdmin(),
-    OrderUser(),
-    LaundryServicePage()
+    Dashboard(),
+    MapPage(),
+    AddLaundry(),
+    HistoryPage(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -38,12 +42,20 @@ class _LayoutAdminState extends State<LayoutAdmin> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.pin_drop_rounded),
+            label: 'Map',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.add_box_rounded),
             label: 'Order',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_laundry_service_rounded),
-            label: 'Service',
+            icon: Icon(Icons.history_rounded),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_pin_rounded),
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,

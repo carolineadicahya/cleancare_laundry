@@ -1,4 +1,6 @@
 // import 'package:CleanCare/screen/owner/navbar.dart';
+import 'package:CleanCare/screen/owner/layout_admin.dart';
+import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +58,26 @@ class Auth {
         final adminDoc =
             await _firestore.collection("admin").doc(user.uid).get();
         if (userDoc.exists) {
-        } else if (adminDoc.exists) {}
+          // User document exists, indicating a regular user.
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LayoutPages()),
+          );
+        } else if (adminDoc.exists) {
+          // Admin document exists, indicating an admin.
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LayoutAdmin()),
+          );
+        } else {
+          // Neither user nor admin document exists, handle as needed.
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    const LayoutPages()), // You may want to handle this case differently.
+          );
+        }
       }
     } on FirebaseAuthException {
       rethrow;

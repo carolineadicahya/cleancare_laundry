@@ -1,8 +1,8 @@
-// import 'package:CleanCare/screen/owner/navbar.dart';
-import 'package:CleanCare/screen/owner/navbar.dart';
-import 'package:CleanCare/screen/user/layout.dart';
+import 'package:CleanCare/screen/owner/layout_admin.dart';
+import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -12,7 +12,7 @@ import '../widgets/app_button.dart';
 import '../widgets/input_widget.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  const Login({Key? key});
 
   @override
   _LoginState createState() => _LoginState();
@@ -55,6 +55,7 @@ class _LoginState extends State<Login> {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null && user.emailVerified) {
         // Panggil checkRole untuk memeriksa peran pengguna setelah login
+        // user.sendEmailVerification();
         checkRole(context);
       } else {
         showErrorDialog(
@@ -74,46 +75,27 @@ class _LoginState extends State<Login> {
 
   void checkRole(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
+    final db = FirebaseFirestore.instance;
+    // print(user?.uid);
+    await db.collection("user").doc(user?.uid).get().then((value) {
+      Map<String, dynamic> res = value.data() as dynamic;
 
-    if (user != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection("user")
-          .doc(user.uid)
-          .get();
-
-      DocumentSnapshot adminDoc = await FirebaseFirestore.instance
-          .collection("admin")
-          .doc(user.uid)
-          .get();
-
-      if (userDoc.exists) {
-        // User document exists, indicating a regular user.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LayoutPages()),
-        );
-      } else if (adminDoc.exists) {
-        // Admin document exists, indicating an admin.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LayoutAdmin()),
-        );
-      } else {
-        // Neither user nor admin document exists, handle as needed.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  const LayoutPages()), // You may want to handle this case differently.
-        );
+      if (res != null) {
+        if (res['role'] == 'admin') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LayoutAdmin()),
+          );
+        }
+        //redirect halaman owner
+        else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LayoutPages()),
+          );
+        }
       }
-    } else {
-      // User is not authenticated, so you may want to navigate to a login page.
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Login()),
-      );
-    }
+    });
   }
 
   @override

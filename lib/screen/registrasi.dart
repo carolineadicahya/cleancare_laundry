@@ -1,8 +1,8 @@
-import 'package:CleanCare/screen/user/layout.dart';
+import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:CleanCare/screen/home.dart';
+import 'package:CleanCare/screen/page_awal.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:CleanCare/utils/constants.dart';
@@ -23,40 +23,49 @@ class _CreateAccountState extends State<CreateAccount> {
   final TextEditingController _controllerPassword = TextEditingController();
 
   Future<void> createUserWithEmailAndPassword() async {
+    final db = FirebaseFirestore.instance;
+
     context.loaderOverlay.show();
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _controllerEmail.text,
-        password: _controllerPassword.text,
+        email: _controllerEmail.text.trim(),
+        password: _controllerPassword.text.trim(),
       );
 
       User? user = userCredential.user;
+
+      Map<String, dynamic> body = {
+        'name': _controllerFullName.text,
+        'email': _controllerEmail.text,
+        'role': 'user'
+      };
+
       if (user != null) {
         await user.sendEmailVerification();
-        await FirebaseFirestore.instance.collection('user').add({
-          'Full Name': _controllerFullName.text,
-          'Email': _controllerEmail.text,
-          'Password': _controllerPassword.text,
-        });
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Email Verifikasi Terkirim'),
-              content: const Text(
-                  'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
+        db
+            .collection('user')
+            .doc(user!.uid)
+            .set(body)
+            .onError((e, _) => print("Error writing document: $e"));
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return AlertDialog(
+        //       title: const Text('Email Verifikasi Terkirim'),
+        //       content: const Text(
+        //           'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
+        //       actions: <Widget>[
+        //         TextButton(
+        //           onPressed: () {
+        //             Navigator.of(context).pop();
+        //           },
+        //           child: const Text('OK'),
+        //         ),
+        //       ],
+        //     );
+        //   },
+        // );
       }
 
       if (user != null && user.emailVerified) {

@@ -1,25 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LaundryService {
-  // final User? user = FirebaseAuth.instance.currentUser;
   final db = FirebaseFirestore.instance.collection('layanan');
 
-  // READ: list layanan
-  Stream<QuerySnapshot> layanan(String id) {
-    return db
-        .doc(id)
-        .collection('layanan')
-        .orderBy('nama', descending: true)
-        .snapshots();
+  Stream<QuerySnapshot> getData() {
+    final dataStream = db.snapshots();
+    return dataStream;
   }
 
-  // ADD: tambah layanan
-  Future<void> addLayanan(Map<String, dynamic> body, String ServiceId) {
-    return db.doc(ServiceId).collection('layanan').add(body);
+  // READ: ambil data detail Layanan
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getDetail(String id) {
+    final dataStream = db.doc(id).snapshots();
+    return dataStream;
   }
 
-  // DELETE: hapus layanan
-  Future<void> deleteLayanan(String ServiceId, String id) {
-    return db.doc(ServiceId).collection('layanan').doc(id).delete();
+  // ADD: tambah layanan ke subkoleksi 'layanan'
+  Future<void> addLayanan(Map<String, dynamic> body) {
+    return db.add(body);
+  }
+
+// UPDATE: perbarui layanan dalam subkoleksi 'layanan'
+  Future<void> updateLayanan(String id, Map<String, dynamic> body) {
+    return db.doc(id).update(body);
+  }
+
+  // DELETE: hapus layanan dalam subkoleksi 'layanan'
+  Future<void> deleteLayanan(String id) {
+    return db.doc(id).delete();
   }
 }
