@@ -48,24 +48,24 @@ class _CreateAccountState extends State<CreateAccount> {
             .doc(user!.uid)
             .set(body)
             .onError((e, _) => print("Error writing document: $e"));
-        // showDialog(
-        //   context: context,
-        //   builder: (context) {
-        //     return AlertDialog(
-        //       title: const Text('Email Verifikasi Terkirim'),
-        //       content: const Text(
-        //           'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
-        //       actions: <Widget>[
-        //         TextButton(
-        //           onPressed: () {
-        //             Navigator.of(context).pop();
-        //           },
-        //           child: const Text('OK'),
-        //         ),
-        //       ],
-        //     );
-        //   },
-        // );
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Email Verifikasi Terkirim'),
+              content: const Text(
+                  'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
       }
 
       if (user != null && user.emailVerified) {

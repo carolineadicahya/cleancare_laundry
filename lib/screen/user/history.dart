@@ -30,6 +30,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Riwayat Pembelian Laundry'),
+        centerTitle: true,
       ),
       body: ListView.builder(
         itemCount: purchaseHistory.length,

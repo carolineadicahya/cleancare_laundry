@@ -30,13 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserProfile() async {
     user = _auth.currentUser!;
-    final userData = await _firestore.collection('user').doc(user!.uid).get();
-    if (userData.exists) {
-      setState(() {
-        nameController.text = userData['Full Name'];
-        emailController.text = userData['Email'];
-      });
-    }
 
     final profileData =
         await _firestore.collection('profil').doc(user!.uid).get();

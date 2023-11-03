@@ -19,7 +19,7 @@ class _LayoutPagesState extends State<LayoutPages> {
   final List<Widget> _widgetOptions = <Widget>[
     Dashboard(),
     MapPage(),
-    AddLaundry(),
+    AddOrder(),
     HistoryPage(),
     ProfilePage(),
   ];
