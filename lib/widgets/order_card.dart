@@ -17,7 +17,7 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        nextScreen(context, "/single-order");
+        nextScreen(context, "/history-card");
       },
       child: Container(
         height: ScreenUtil().setHeight(121.0),

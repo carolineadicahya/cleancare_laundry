@@ -40,7 +40,7 @@ class LatestOrders extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Latest Orders",
+                  "History",
                   style: TextStyle(
                     color: Color.fromRGBO(19, 22, 33, 1),
                     fontSize: 18.0,
