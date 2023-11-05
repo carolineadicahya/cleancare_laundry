@@ -1,6 +1,6 @@
+import 'package:CleanCare/screen/owner/dashboard_admin.dart';
 import 'package:CleanCare/screen/owner/layout_admin.dart';
 import 'package:CleanCare/screen/user/dashboard_user.dart';
-import 'package:CleanCare/screen/user/detail_order.dart';
 import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -48,9 +48,9 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
     case "/":
       return MaterialPageRoute(builder: (BuildContext context) {
-        return const Home();
+        // return const Home();
         // return const LayoutAdmin();
-        // return const LayoutPages();
+        return const LayoutPages();
       });
     case "/login":
       return MaterialPageRoute(builder: (BuildContext context) {
@@ -60,9 +60,17 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (BuildContext context) {
         return const LayoutPages();
       });
+    case "/dashboard-user":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return const Dashboard();
+      });
     case "/admin":
       return MaterialPageRoute(builder: (BuildContext context) {
         return const LayoutAdmin();
+      });
+    case "/dashboard-admin":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return const DashboardAdmin();
       });
     default:
       return MaterialPageRoute(builder: (BuildContext context) {

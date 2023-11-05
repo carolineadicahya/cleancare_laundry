@@ -1,6 +1,6 @@
 import 'package:CleanCare/screen/user/pilih_paket.dart';
 import 'package:CleanCare/screen/user/dashboard_user.dart';
-import 'package:CleanCare/screen/user/history.dart';
+import 'package:CleanCare/screen/user/order_user.dart';
 import 'package:CleanCare/screen/user/map.dart';
 // import 'package:CleanCare/screen/user/pilih_paket2.dart';
 import 'package:CleanCare/screen/user/profil_setting.dart';
@@ -22,7 +22,7 @@ class _LayoutPagesState extends State<LayoutPages> {
     MapPage(),
     AddOrder(),
     // PaketIndex(),
-    HistoryPage(),
+    OrderPage(),
     ProfilePage(),
   ];
 
@@ -49,11 +49,11 @@ class _LayoutPagesState extends State<LayoutPages> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_box_rounded),
-            label: 'Order',
+            label: 'Pilih Paket',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history_rounded),
-            label: 'History',
+            icon: Icon(Icons.local_laundry_service),
+            label: 'Order',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_pin_rounded),
