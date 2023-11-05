@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   # flutter_native_config: ^1.0.0
+  dropdown_button2: ^2.3.9
   flutter_config: ^2.0.2
   google_fonts: ^6.1.0
   google_maps_flutter: ^2.5.0
@@ -55,6 +56,7 @@ dependencies:
   dio: ^5.3.3
   json_serializable: ^6.7.1
   firebase_storage: ^11.4.0
+  dropdown_below: ^1.0.3
 
 dev_dependencies:
   flutter_test:

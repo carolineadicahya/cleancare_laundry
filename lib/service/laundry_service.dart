@@ -4,7 +4,7 @@ class LaundryService {
   final db = FirebaseFirestore.instance.collection('layanan');
 
   Stream<QuerySnapshot> getData() {
-    final dataStream = db.snapshots();
+    final dataStream = db.orderBy('name', descending: false).snapshots();
     return dataStream;
   }
 
