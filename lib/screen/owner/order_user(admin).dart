@@ -69,7 +69,7 @@ class _OrderUserState extends State<OrderUser> {
               );
             },
             child: Container(
-              margin: EdgeInsets.all(6.0),
+              margin: EdgeInsets.all(8.0),
               child: Card(
                 elevation: 5,
                 child: ListTile(
@@ -92,7 +92,7 @@ class _OrderUserState extends State<OrderUser> {
                               // Mengubah status pembelian menjadi 'Sukses'
                               changePurchaseStatus(index, 'Sukses');
                             },
-                            child: Text('Ubah Sukses'),
+                            child: Text('Sukses'),
                           ),
                           SizedBox(height: 8.0),
                           ElevatedButton(
@@ -100,7 +100,11 @@ class _OrderUserState extends State<OrderUser> {
                               // Mengubah status pembelian menjadi 'Cancel'
                               changePurchaseStatus(index, 'Cancel');
                             },
-                            child: Text('Ubah Cancel'),
+                            child: Text('Cancel'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(255, 238,
+                                  114, 105), // Set the background color to red
+                            ),
                           ),
                         ],
                       )

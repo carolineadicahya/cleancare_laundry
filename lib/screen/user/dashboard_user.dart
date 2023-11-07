@@ -16,6 +16,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   String fullName = "Pelanggan"; // Inisialisasi nama default
+  String _profileImageUrl = "assets/images/user.png"; // Gambar profil default
 
   @override
   void initState() {
@@ -23,24 +24,49 @@ class _DashboardState extends State<Dashboard> {
     loadUserName(); // Memuat nama pengguna saat widget diinisialisasi
   }
 
+  void showErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> loadUserName() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // Ambil data nama dari Firestore
       final userData = await FirebaseFirestore.instance
           .collection('profil')
           .doc(user.uid)
           .get();
       if (userData.exists) {
         final userName = userData['name'];
+        final profileImageUrl =
+            userData['profileImageURL']; // URL gambar profil
+
         setState(() {
           fullName = userName ?? "Pelanggan";
+          if (profileImageUrl != null) {
+            _profileImageUrl =
+                profileImageUrl; // Gunakan URL gambar profil jika tersedia
+          }
         });
       }
     }
   }
 
-  int activeIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,10 +116,38 @@ class _DashboardState extends State<Dashboard> {
                             GestureDetector(
                               onTap: () async {
                                 await FirebaseAuth.instance.signOut();
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const Login()),
+                                showDialog(
+                                  context:
+                                      context, // Pastikan `context` adalah `BuildContext` yang benar
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Keluar'),
+                                      content: const Text(
+                                          'Yakin ingin keluar dari aplikasi?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Batal'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); // Tutup dialog konfirmasi
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Login(),
+                                              ),
+                                            );
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
                               },
                               child: const Icon(
@@ -101,7 +155,7 @@ class _DashboardState extends State<Dashboard> {
                                 color: Colors.white,
                                 size: 24.0,
                               ),
-                            ),
+                            )
                           ],
                         ),
                         Row(

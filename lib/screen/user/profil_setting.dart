@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io'; // Tambahkan ini untuk mengimpor 'File' yang diperlukan
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}); // Perbaiki 'super.key' menjadi 'Key? key'
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -11,7 +14,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? user = FirebaseAuth.instance.currentUser;
+  User? user;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   TextEditingController nameController = TextEditingController();
@@ -20,35 +23,42 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController emailController = TextEditingController();
 
   bool isEditing = false;
+  File?
+      _selectedImage; // Menambahkan '_selectedImage' sebagai variabel File yang dipilih
 
   @override
   void initState() {
     super.initState();
-    user = _auth.currentUser!;
+    user = _auth.currentUser;
     _loadUserProfile();
   }
 
   Future<void> _loadUserProfile() async {
-    user = _auth.currentUser!;
+    user = _auth.currentUser;
 
     final profileData =
         await _firestore.collection('profil').doc(user!.uid).get();
     if (profileData.exists) {
       setState(() {
-        nameController.text = profileData['name'] ?? nameController.text;
-        addressController.text =
-            profileData['address'] ?? addressController.text;
-        phoneNumberController.text =
-            profileData['phoneNumber'] ?? phoneNumberController.text;
-        emailController.text = profileData['email'] ?? emailController.text;
+        nameController.text = profileData['name'] ?? '';
+        addressController.text = profileData['address'] ?? '';
+        phoneNumberController.text = profileData['phoneNumber'] ?? '';
+        emailController.text = profileData['email'] ?? '';
       });
     }
   }
 
-  String name = "Nama Pengguna";
-  String address = "Alamat Pengguna";
-  String phoneNumber = "Nomor Telepon";
-  String email = "Email Pengguna";
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      final file = File(pickedImage.path);
+      setState(() {
+        _selectedImage = file;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +71,6 @@ class _ProfilePageState extends State<ProfilePage> {
       onPressed: () {
         setState(() {
           isEditing = true;
-          nameController.text = name;
-          addressController.text = address;
-          phoneNumberController.text = phoneNumber;
-          emailController.text = email;
         });
       },
       child: const Text('Edit Profil'),
@@ -79,14 +85,6 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () {
               setState(() {
                 isEditing = true;
-                nameController.text =
-                    nameController.text; // Initialize with existing data
-                addressController.text =
-                    addressController.text; // Initialize with existing data
-                phoneNumberController.text =
-                    phoneNumberController.text; // Initialize with existing data
-                emailController.text =
-                    emailController.text; // Initialize with existing data
               });
             },
           ),
@@ -100,12 +98,17 @@ class _ProfilePageState extends State<ProfilePage> {
             Center(
               child: GestureDetector(
                 onTap: () {
-                  // Tambahkan logika untuk memilih atau mengganti gambar profil
+                  _pickImage();
                 },
-                child: const CircleAvatar(
-                  radius: 60.0,
-                  backgroundImage: AssetImage("assets/images/user.png"),
-                ),
+                child: _selectedImage != null
+                    ? CircleAvatar(
+                        radius: 60.0,
+                        backgroundImage: FileImage(_selectedImage!),
+                      )
+                    : CircleAvatar(
+                        radius: 60.0,
+                        backgroundImage: AssetImage("assets/images/user.png"),
+                      ),
               ),
             ),
             const SizedBox(height: 24.0),
@@ -125,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   )
                 : Text(
-                    nameController.text, // Display the name from the controller
+                    nameController.text,
                     style: const TextStyle(fontSize: 16.0),
                   ),
             const SizedBox(height: 24.0),
@@ -145,8 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   )
                 : Text(
-                    addressController
-                        .text, // Display the address from the controller
+                    addressController.text,
                     style: const TextStyle(fontSize: 16.0),
                   ),
             const SizedBox(height: 24.0),
@@ -166,8 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   )
                 : Text(
-                    phoneNumberController
-                        .text, // Display the phone number from the controller
+                    phoneNumberController.text,
                     style: const TextStyle(fontSize: 16.0),
                   ),
             const SizedBox(height: 24.0),
@@ -187,12 +188,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   )
                 : Text(
-                    emailController
-                        .text, // Display the email from the controller
+                    emailController.text,
                     style: const TextStyle(fontSize: 16.0),
                   ),
             const SizedBox(height: 24.0),
-            if (isEditing) isEditing ? saveButton : editButton
+            if (isEditing) isEditing ? saveButton : editButton,
           ],
         ),
       ),
@@ -200,20 +200,38 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _saveChanges() async {
-    final userDocRef = _firestore.collection('profil').doc(user!.uid);
-    await userDocRef.set({
-      'name': nameController.text,
-      'address': addressController.text,
-      'phoneNumber': phoneNumberController.text,
-      'email': emailController.text,
-    }, SetOptions(merge: true));
-    setState(() {
-      isEditing = false;
-      name = nameController.text;
-      address = addressController.text;
-      phoneNumber = phoneNumberController.text;
-      email = emailController.text;
-    });
+    final user = _auth.currentUser;
+    if (user != null) {
+      final userDocRef = _firestore.collection('profil').doc(user.uid);
+
+      if (_selectedImage != null) {
+        final storageReference =
+            FirebaseStorage.instance.ref().child('profile_images/${user.uid}');
+        await storageReference.putFile(_selectedImage!);
+
+        final imageURL = await storageReference.getDownloadURL();
+
+        await userDocRef.set({
+          'name': nameController.text,
+          'address': addressController.text,
+          'phoneNumber': phoneNumberController.text,
+          'email': emailController.text,
+          'profileImageURL': imageURL,
+        }, SetOptions(merge: true));
+      } else {
+        await userDocRef.set({
+          'name': nameController.text,
+          'address': addressController.text,
+          'phoneNumber': phoneNumberController.text,
+          'email': emailController.text,
+        }, SetOptions(merge: true));
+      }
+
+      setState(() {
+        isEditing = false;
+        _loadUserProfile(); // Memuat ulang data profil
+      });
+    }
   }
 
   @override

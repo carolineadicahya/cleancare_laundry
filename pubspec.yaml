@@ -57,6 +57,8 @@ dependencies:
   json_serializable: ^6.7.1
   firebase_storage: ^11.4.0
   dropdown_below: ^1.0.3
+  image_picker: ^1.0.4
+  flutter_profile_picture: ^2.0.0
 
 dev_dependencies:
   flutter_test:
