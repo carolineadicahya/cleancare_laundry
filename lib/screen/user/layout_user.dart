@@ -21,7 +21,6 @@ class _LayoutPagesState extends State<LayoutPages> {
     Dashboard(),
     MapPage(),
     AddOrder(),
-    // PaketIndex(),
     OrderPage(),
     ProfilePage(),
   ];
@@ -57,7 +56,7 @@ class _LayoutPagesState extends State<LayoutPages> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_pin_rounded),
-            label: 'Profile',
+            label: 'Profil',
           ),
         ],
         currentIndex: _selectedIndex,

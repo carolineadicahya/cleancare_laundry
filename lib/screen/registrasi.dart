@@ -167,7 +167,7 @@ class _CreateAccountState extends State<CreateAccount> {
                                 height: 20.0,
                               ),
                               Text(
-                                "Create an Account",
+                                "Daftar Akun Saya",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
@@ -202,9 +202,9 @@ class _CreateAccountState extends State<CreateAccount> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 InputWidget(
-                                  topLabel: "Full Name",
+                                  topLabel: "Nama Lengkap",
                                   controller: _controllerFullName,
-                                  hintText: "Enter your full name",
+                                  hintText: "Masukkan Nama Lengkap Anda",
                                 ),
                                 const SizedBox(
                                   height: 25.0,
@@ -212,7 +212,7 @@ class _CreateAccountState extends State<CreateAccount> {
                                 InputWidget(
                                   topLabel: "Email",
                                   controller: _controllerEmail,
-                                  hintText: "Enter your email address",
+                                  hintText: "Masukkan Email Anda",
                                 ),
                                 const SizedBox(
                                   height: 25.0,
@@ -221,14 +221,14 @@ class _CreateAccountState extends State<CreateAccount> {
                                   topLabel: "Password",
                                   controller: _controllerPassword,
                                   obscureText: true,
-                                  hintText: "Enter your password",
+                                  hintText: "Masukkan Password Anda",
                                 ),
                                 const SizedBox(
                                   height: 20.0,
                                 ),
                                 AppButton(
                                     type: ButtonType.PRIMARY,
-                                    text: "Create Account",
+                                    text: "Daftar Akun Saya",
                                     onPressed: createUserWithEmailAndPassword)
                               ],
                             ),

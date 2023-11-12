@@ -43,7 +43,7 @@ class _LayoutAdminState extends State<LayoutAdmin> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_laundry_service_rounded),
-            label: 'Service',
+            label: 'Paket Layanan',
           ),
         ],
         currentIndex: _selectedIndex,

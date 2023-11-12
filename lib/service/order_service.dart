@@ -4,7 +4,7 @@ class OrderService {
   final db = FirebaseFirestore.instance.collection('order');
 
   Stream<QuerySnapshot> getData() {
-    final dataStream = db.snapshots();
+    final dataStream = db.orderBy('created', descending: true).snapshots();
     return dataStream;
   }
 

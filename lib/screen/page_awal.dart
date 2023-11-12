@@ -65,7 +65,7 @@ class Home extends StatelessWidget {
                   children: [
                     const SizedBox(height: 20.0),
                     Text(
-                      "Welcome to Clean Care",
+                      "Selamat Datang di CleanCare",
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: const Color.fromRGBO(19, 22, 33, 1),
@@ -75,7 +75,7 @@ class Home extends StatelessWidget {
                       height: 10.0,
                     ),
                     const Text(
-                      "This is the first version of our laundry app. Please sign in or create an account below.",
+                      "Ini adalah versi 1.0 aplikasi kami. Mohon masuk aplikasi atau mendaftar akun di bawah ini.",
                       style: TextStyle(
                         color: Color.fromRGBO(74, 77, 84, 1),
                         fontSize: 14.0,
@@ -86,7 +86,7 @@ class Home extends StatelessWidget {
                     ),
                     // Let's create a generic button widget
                     AppButton(
-                      text: "Log In",
+                      text: "Masuk",
                       type: ButtonType.PLAIN,
                       onPressed: () {
                         nextScreen(context, "/login");
@@ -96,7 +96,7 @@ class Home extends StatelessWidget {
                       height: 15.0,
                     ),
                     AppButton(
-                      text: "Create an Account",
+                      text: "Daftar Akun Saya",
                       type: ButtonType.PRIMARY,
                       onPressed: () {
                         Navigator.of(context).push(

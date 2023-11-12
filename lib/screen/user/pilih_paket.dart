@@ -116,7 +116,7 @@ class _AddOrderState extends State<AddOrder> {
                   );
                 },
               ),
-              Text("Total Harga Rp.${total.toString()}"),
+              Text("Total Harga Rp. ${total.toString()}"),
               ElevatedButton(
                 onPressed: () async {
                   // Order button clicked, create a new order
@@ -168,7 +168,7 @@ class _AddOrderState extends State<AddOrder> {
           // Order berhasil
           return AlertDialog(
             title: Text('Order Berhasil'),
-            content: Text('Ordermu telah terkirim dengan Order ID: $orderId'),
+            content: Text('Ordermu telah terkirim dengan ID Order: $orderId'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {

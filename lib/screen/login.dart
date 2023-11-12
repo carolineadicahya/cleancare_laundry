@@ -154,7 +154,7 @@ class _LoginState extends State<Login> {
                                 height: 20.0,
                               ),
                               Text(
-                                "Log In",
+                                "Masuk",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
@@ -191,7 +191,7 @@ class _LoginState extends State<Login> {
                                 InputWidget(
                                   topLabel: "Email",
                                   controller: _controllerEmail,
-                                  hintText: "Enter your email address",
+                                  hintText: "Masukkan Email Anda",
                                 ),
                                 const SizedBox(
                                   height: 25.0,
@@ -200,7 +200,7 @@ class _LoginState extends State<Login> {
                                   topLabel: "Password",
                                   controller: _controllerPassword,
                                   obscureText: true,
-                                  hintText: "Enter your password",
+                                  hintText: "Masukkan Password Anda",
                                 ),
                                 const SizedBox(
                                   height: 15.0,
@@ -225,7 +225,7 @@ class _LoginState extends State<Login> {
                                               title:
                                                   const Text('Reset Password'),
                                               content: const Text(
-                                                  'An email to reset your password has been sent.'),
+                                                  'Email untuk reset password telah terkirim.'),
                                               actions: <Widget>[
                                                 TextButton(
                                                   onPressed: () {
@@ -239,15 +239,15 @@ class _LoginState extends State<Login> {
                                         );
                                       } catch (e) {
                                         showErrorDialog(
-                                            'Error sending password reset email: $e');
+                                            'Gagal mengirim email reset password: $e');
                                       }
                                     } else {
                                       showErrorDialog(
-                                          'Please enter your email address to reset your password.');
+                                          'Mohon masukkan Email Anda untuk mereset password!');
                                     }
                                   },
                                   child: const Text(
-                                    "Forgot Password?",
+                                    "Lupa Password?",
                                     textAlign: TextAlign.right,
                                     style: TextStyle(
                                       decoration: TextDecoration.underline,
@@ -261,7 +261,7 @@ class _LoginState extends State<Login> {
                                 ),
                                 AppButton(
                                   type: ButtonType.PRIMARY,
-                                  text: "Log In",
+                                  text: "Masuk",
                                   onPressed: signIn,
                                 )
                               ],

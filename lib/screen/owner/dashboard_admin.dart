@@ -111,7 +111,7 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: "Welcome Back,\n",
+                                    text: "Selamat Datang,\n",
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge

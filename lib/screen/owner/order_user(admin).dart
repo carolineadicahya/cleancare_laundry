@@ -35,7 +35,7 @@ class _OrderUserState extends State<OrderUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order Laundry'),
+        title: const Text('Order User'),
       ),
       body: ListView.builder(
         itemCount: purchaseHistory.length,

@@ -86,7 +86,7 @@ class _LaundryServicePageState extends State<LaundryServicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Laundry Services'),
+        title: Text('Paket Laundry'),
       ),
       body: SingleChildScrollView(
         child: Padding(
