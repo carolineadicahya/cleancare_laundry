@@ -1,5 +1,7 @@
 import 'package:CleanCare/service/laundry_service.dart';
+import 'package:CleanCare/service/order_service.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddOrder extends StatefulWidget {
   @override
@@ -8,8 +10,27 @@ class AddOrder extends StatefulWidget {
 
 class _AddOrderState extends State<AddOrder> {
   final LaundryService laundryService = LaundryService();
-  int quantity = 0; // Variabel untuk jumlah quantity
+  final OrderService orderService = OrderService();
   List<Map<String, dynamic>> item = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    laundryService.getData().listen((querySnapshot) {
+      setState(() {
+        item = querySnapshot.docs.map((doc) {
+          return {
+            'id': doc.id,
+            'name': doc['name'],
+            'price': doc['price'],
+            'quantity': 0,
+            'totalPrice': 0.0,
+          };
+        }).toList();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,89 +50,66 @@ class _AddOrderState extends State<AddOrder> {
                     return Center(child: CircularProgressIndicator());
                   }
                   var items = snapshot.data?.docs;
-                  if (items != null && items.isNotEmpty) {
-                    item = items.map((item) {
-                      return {
-                        'name': item['name'],
-                        'price': item['price'],
-                        'quantity': quantity,
-                      };
-                    }).toList();
-                    print(item);
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: item.length,
-                      itemBuilder: (context, index) {
-                        var data = item[index];
-                        return Container(
-                          child: ListTile(
-                            title: Text(
-                              "${data['name']}",
-                              style: const TextStyle(
-                                fontSize: 14.0,
-                              ),
-                            ),
-                            subtitle: Text(
-                              'Rp${(data['price'])}',
-                              // 'Rp${(data['price'] * quantity)}',
-                              style: const TextStyle(
-                                fontSize: 14.0,
-                              ),
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    var dataQuantity = item[index]['quantity'];
-                                    print(dataQuantity);
-                                    setState(() {
-                                      if (dataQuantity > 0) {
-                                        item[index]['quantity'] =
-                                            --dataQuantity;
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      shape: const CircleBorder()),
-                                  child: const Icon(
-                                    Icons.remove_rounded,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: 16.0),
-                                Text(quantity.toString(),
-                                    style: const TextStyle(fontSize: 18.0)),
-                                const SizedBox(width: 16.0),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    var dataQuantity = item[index]['quantity'];
-                                    print(dataQuantity);
-                                    setState(() {
-                                      item[index]['quantity'] = ++dataQuantity;
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      shape: const CircleBorder()),
-                                  child: const Icon(
-                                    Icons.add_rounded,
-                                    size: 24,
-                                  ),
-                                ),
-                              ],
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: item.length,
+                    itemBuilder: (context, index) {
+                      var data = item[index];
+                      return Container(
+                        child: ListTile(
+                          title: Text(
+                            "${data['name']}",
+                            style: const TextStyle(
+                              fontSize: 14.0,
                             ),
                           ),
-                        );
-                      },
-                    );
-                  }
-
-                  return Center(child: Text('Tidak Ada Paket Laundry.'));
+                          subtitle: Text(
+                            'Rp${(data['price'])}',
+                            style: const TextStyle(
+                              fontSize: 14.0,
+                            ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  updateQuantity(index, -1);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: const CircleBorder()),
+                                child: const Icon(
+                                  Icons.remove_rounded,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 16.0),
+                              Text(data['quantity'].toString(),
+                                  style: const TextStyle(fontSize: 18.0)),
+                              const SizedBox(width: 16.0),
+                              ElevatedButton(
+                                onPressed: () {
+                                  updateQuantity(index, 1);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: const CircleBorder()),
+                                child: const Icon(
+                                  Icons.add_rounded,
+                                  size: 24,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
               ElevatedButton(
-                onPressed: () {
-                  print(item);
+                onPressed: () async {
+                  // Order button clicked, create a new order
+                  await createNewOrder();
                 },
                 child: Text('Order'),
               ),
@@ -119,6 +117,67 @@ class _AddOrderState extends State<AddOrder> {
           ),
         ),
       ),
+    );
+  }
+
+  // Function to update the quantity and total price for an item
+  void updateQuantity(int index, int change) {
+    setState(() {
+      var data = item[index];
+      var newQuantity = data['quantity'] + change;
+      if (newQuantity >= 0) {
+        item[index]['quantity'] = newQuantity;
+        item[index]['totalPrice'] = data['price'] * newQuantity;
+      }
+    });
+  }
+
+  // Function to create a new order based on selected items
+  Future<void> createNewOrder() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    // Filter items with quantity greater than 0
+    var selectedItems = item.where((data) => data['quantity'] > 0).toList();
+
+    // Create a new order with selected items
+    var orderData = {
+      'userName': user?.email,
+      'items': selectedItems.map((data) {
+        var itemName = data['name'];
+        var quantity = data['quantity'];
+        var totalPrice = data['price'] * quantity;
+
+        return {
+          'itemName': itemName,
+          'quantity': quantity,
+          'totalPrice': totalPrice,
+        };
+      }).toList(),
+      'orderDate': DateTime.now(),
+    };
+
+    print(orderData);
+
+    // Call the OrderService to add the order to Firestore
+    // var orderId = await orderService.addOrder(orderData);
+
+    // Show a success dialog with the order ID
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Order Berhasil'),
+          // content: Text('Ordermu telah terkirim dengan Order ID: $orderId'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

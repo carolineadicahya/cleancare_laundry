@@ -15,8 +15,9 @@ class OrderService {
   }
 
   // ADD: tambah orderan
-  Future<void> addOrder(Map<String, dynamic> body) {
-    return db.add(body);
+  Future<String> addOrder(Map<String, dynamic> body) async {
+    var result = await db.add(body);
+    return result.id;
   }
 
 // UPDATE: perbarui order
