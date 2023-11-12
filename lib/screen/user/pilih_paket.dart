@@ -12,6 +12,7 @@ class _AddOrderState extends State<AddOrder> {
   final LaundryService laundryService = LaundryService();
   final OrderService orderService = OrderService();
   List<Map<String, dynamic>> item = [];
+  int total = 0;
 
   @override
   void initState() {
@@ -25,7 +26,6 @@ class _AddOrderState extends State<AddOrder> {
             'name': doc['name'],
             'price': doc['price'],
             'quantity': 0,
-            'totalPrice': 0.0,
           };
         }).toList();
       });
@@ -74,7 +74,13 @@ class _AddOrderState extends State<AddOrder> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  updateQuantity(index, -1);
+                                  var dataQuantity = item[index]['quantity'];
+                                  setState(() {
+                                    if (dataQuantity > 0) {
+                                      item[index]['quantity'] = --dataQuantity;
+                                      total -= int.parse(item[index]['price']);
+                                    }
+                                  });
                                 },
                                 style: ElevatedButton.styleFrom(
                                     shape: const CircleBorder()),
@@ -89,7 +95,11 @@ class _AddOrderState extends State<AddOrder> {
                               const SizedBox(width: 16.0),
                               ElevatedButton(
                                 onPressed: () {
-                                  updateQuantity(index, 1);
+                                  var dataQuantity = item[index]['quantity'];
+                                  setState(() {
+                                    item[index]['quantity'] = ++dataQuantity;
+                                    total += int.parse(item[index]['price']);
+                                  });
                                 },
                                 style: ElevatedButton.styleFrom(
                                     shape: const CircleBorder()),
@@ -106,6 +116,7 @@ class _AddOrderState extends State<AddOrder> {
                   );
                 },
               ),
+              Text("Total Harga Rp.${total.toString()}"),
               ElevatedButton(
                 onPressed: () async {
                   // Order button clicked, create a new order
@@ -118,18 +129,6 @@ class _AddOrderState extends State<AddOrder> {
         ),
       ),
     );
-  }
-
-  // Function to update the quantity and total price for an item
-  void updateQuantity(int index, int change) {
-    setState(() {
-      var data = item[index];
-      var newQuantity = data['quantity'] + change;
-      if (newQuantity >= 0) {
-        item[index]['quantity'] = newQuantity;
-        item[index]['totalPrice'] = data['price'] * newQuantity;
-      }
-    });
   }
 
   // Function to create a new order based on selected items
@@ -145,12 +144,12 @@ class _AddOrderState extends State<AddOrder> {
       'items': selectedItems.map((data) {
         var itemName = data['name'];
         var quantity = data['quantity'];
-        var totalPrice = data['price'] * quantity;
+        var total = int.parse(data['price']) * quantity;
 
         return {
           'itemName': itemName,
           'quantity': quantity,
-          'totalPrice': totalPrice,
+          'total': total,
         };
       }).toList(),
       'orderDate': DateTime.now(),
@@ -159,24 +158,41 @@ class _AddOrderState extends State<AddOrder> {
     print(orderData);
 
     // Call the OrderService to add the order to Firestore
-    // var orderId = await orderService.addOrder(orderData);
+    var orderId = await orderService.addOrder(orderData);
 
     // Show a success dialog with the order ID
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Order Berhasil'),
-          // content: Text('Ordermu telah terkirim dengan Order ID: $orderId'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
+        if (selectedItems.isNotEmpty) {
+          // Order berhasil
+          return AlertDialog(
+            title: Text('Order Berhasil'),
+            content: Text('Ordermu telah terkirim dengan Order ID: $orderId'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        } else {
+          // Terjadi kesalahan
+          return AlertDialog(
+            title: Text('Terjadi Kesalahan'),
+            content: Text('Silahkan Pilih Paket Laundry!'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        }
       },
     );
   }
