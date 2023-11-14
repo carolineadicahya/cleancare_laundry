@@ -87,6 +87,7 @@ class _LaundryServicePageState extends State<LaundryServicePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Paket Laundry'),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(

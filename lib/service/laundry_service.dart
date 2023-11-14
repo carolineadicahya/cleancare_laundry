@@ -14,17 +14,17 @@ class LaundryService {
     return dataStream;
   }
 
-  // ADD: tambah layanan ke subkoleksi 'layanan'
+  // ADD: tambah layanan
   Future<void> addLayanan(Map<String, dynamic> body) {
     return db.add(body);
   }
 
-// UPDATE: perbarui layanan dalam subkoleksi 'layanan'
+// UPDATE: perbarui layanan
   Future<void> updateLayanan(String id, Map<String, dynamic> body) {
     return db.doc(id).update(body);
   }
 
-  // DELETE: hapus layanan dalam subkoleksi 'layanan'
+  // DELETE: hapus layanan
   Future<void> deleteLayanan(String id) {
     return db.doc(id).delete();
   }

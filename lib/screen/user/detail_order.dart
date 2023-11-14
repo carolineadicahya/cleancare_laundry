@@ -1,123 +1,110 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-class OrderDetail {
-  final String userName;
-  final String service;
-  final double servicePrice;
-  final int quantity;
-  final double subtotal;
-  final DateTime estimatedCompletionDate;
-  String status;
-
-  OrderDetail({
-    required this.userName,
-    required this.service,
-    required this.servicePrice,
-    required this.quantity,
-    required this.subtotal,
-    required this.estimatedCompletionDate,
-    required this.status,
-  });
-}
+import 'package:CleanCare/service/order_service.dart';
 
 class OrderDetailPage extends StatefulWidget {
-  final OrderDetail orderDetail;
+  const OrderDetailPage({Key? key, required this.id}) : super(key: key);
 
-  OrderDetailPage({required this.orderDetail});
+  final String id;
 
   @override
   _OrderDetailPageState createState() => _OrderDetailPageState();
 }
 
 class _OrderDetailPageState extends State<OrderDetailPage> {
-  void showErrorDialog(String errorMessage) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(errorMessage),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  Map<String, dynamic> order = {};
+
+  final OrderService orderService = OrderService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Detail'),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Nama User: ${widget.orderDetail.userName}'),
-            Text('Layanan: ${widget.orderDetail.service}'),
-            Text(
-                'Harga Perlayanan: \$${widget.orderDetail.servicePrice.toStringAsFixed(2)}'),
-            Text('Jumlah: ${widget.orderDetail.quantity}'),
-            Text(
-                'Estimasi Subtotal: \$${widget.orderDetail.subtotal.toStringAsFixed(2)}'),
-            Text(
-                'Estimasi Tanggal Selesai: ${widget.orderDetail.estimatedCompletionDate.toLocal()}'),
-            Row(
-              children: [
-                Text('Status Order: ${widget.orderDetail.status}'),
-              ],
-            ),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Cancel'),
-                          content: const Text('Yakin ingin membatalkan order?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  widget.orderDetail.status = 'Cancel';
-                                });
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                    setState(() {
-                      widget.orderDetail.status = 'Cancel';
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(
-                        255, 238, 114, 105), // Set the background color to red
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                        color: Colors.white), // Set text color to white
-                  ),
-                )
-              ],
-            ),
-          ],
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: orderService.getDetail(widget.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            DocumentSnapshot? item = snapshot.data;
+            order = {
+              "email": item!['email'],
+              "nama paket": item['nama_paket'],
+              "quantity": item['quantity'],
+              "total": item['total'],
+              "tanggal order": item['tanggal_order'],
+            };
+            return OrderDetailBody(
+              id: item.id,
+              email: item['email'],
+              namaPaket: item['nama_paket'],
+              quantity: item['quantity'],
+              total: item['total'],
+              tanggalOrder: item['tanggal_order'],
+              orderService: orderService,
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class OrderDetailBody extends StatelessWidget {
+  const OrderDetailBody({
+    Key? key,
+    required this.id,
+    required this.email,
+    required this.namaPaket,
+    required this.quantity,
+    required this.total,
+    required this.tanggalOrder,
+    required this.orderService,
+  }) : super(key: key);
+
+  final String id;
+  final String email;
+  final String namaPaket;
+  final int quantity;
+  final double total;
+  final DateTime tanggalOrder;
+  final OrderService orderService;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Order ID: $id'),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Email: $email'),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Package Name: $namaPaket'),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Quantity: $quantity'),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Total: $total'),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Order Date: $tanggalOrder'),
+        ),
+      ],
     );
   }
 }

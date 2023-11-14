@@ -1,14 +1,17 @@
+import 'package:CleanCare/models/card_order.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderService {
   final db = FirebaseFirestore.instance.collection('order');
 
+  // READ: ambil data get all
   Stream<QuerySnapshot> getData() {
-    final dataStream = db.orderBy('created', descending: true).snapshots();
+    final dataStream =
+        db.orderBy('tanggal order', descending: true).snapshots();
     return dataStream;
   }
 
-  // READ: ambil data detail Order
+  // READ: ambil data detail Order get by id
   Stream<DocumentSnapshot<Map<String, dynamic>>> getDetail(String id) {
     final dataStream = db.doc(id).snapshots();
     return dataStream;
@@ -29,4 +32,6 @@ class OrderService {
   Future<void> cancelOrder(String id) {
     return db.doc(id).delete();
   }
+
+  void updateOrderStatus(String id, OrderStatus cancel) {}
 }

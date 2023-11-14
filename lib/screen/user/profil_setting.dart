@@ -79,6 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil Saya'),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),

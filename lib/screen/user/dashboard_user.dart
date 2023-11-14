@@ -117,8 +117,7 @@ class _DashboardState extends State<Dashboard> {
                               onTap: () async {
                                 await FirebaseAuth.instance.signOut();
                                 showDialog(
-                                  context:
-                                      context, // Pastikan `context` adalah `BuildContext` yang benar
+                                  context: context,
                                   builder: (context) {
                                     return AlertDialog(
                                       title: const Text('Keluar'),
@@ -133,8 +132,7 @@ class _DashboardState extends State<Dashboard> {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(); // Tutup dialog konfirmasi
+                                            Navigator.of(context).pop();
                                             Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(

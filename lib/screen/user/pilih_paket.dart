@@ -140,19 +140,19 @@ class _AddOrderState extends State<AddOrder> {
 
     // Create a new order with selected items
     var orderData = {
-      'userName': user?.email,
+      'email': user?.email,
       'items': selectedItems.map((data) {
         var itemName = data['name'];
         var quantity = data['quantity'];
         var total = int.parse(data['price']) * quantity;
 
         return {
-          'itemName': itemName,
+          'nama paket': itemName,
           'quantity': quantity,
           'total': total,
         };
       }).toList(),
-      'orderDate': DateTime.now(),
+      'tanggal order': DateTime.now(),
     };
 
     print(orderData);

@@ -90,6 +90,37 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                             GestureDetector(
                               onTap: () async {
                                 await FirebaseAuth.instance.signOut();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Keluar'),
+                                      content: const Text(
+                                          'Yakin ingin keluar dari aplikasi?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Batal'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Login(),
+                                              ),
+                                            );
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
