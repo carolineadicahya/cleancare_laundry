@@ -43,7 +43,6 @@ class _OrderPageState extends State<OrderPage> {
                   final textColor = isCancelled ? Colors.red : Colors.green;
 
                   return OrderCard(
-                    id: history['id'] ?? '',
                     email: history['email'] ?? '',
                     items: (history['items'] as List<dynamic>?)
                             ?.map<Map<String, dynamic>>((item) {
@@ -55,12 +54,10 @@ class _OrderPageState extends State<OrderPage> {
                           }
                         }).toList() ??
                         [],
-                    orderDate:
-                        (history['tanggal order'] as Timestamp?)?.toDate() ??
-                            DateTime.now(),
+                    orderDate: (history['tanggal order'] as Timestamp).toDate(),
                     status: getOrderStatus(history['status'] ?? ''),
                     onDetail: () {
-                      final String? id = history[index].id;
+                      final String id = items[index].id;
                       if (id != null) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -70,6 +67,10 @@ class _OrderPageState extends State<OrderPage> {
                           ),
                         );
                       }
+                      // else {
+                      //   // Handle the case where 'id' is null, for example, show an error message.
+                      //   print("ID Order tidak ditemukan");
+                      // }
                     },
                   );
                 },

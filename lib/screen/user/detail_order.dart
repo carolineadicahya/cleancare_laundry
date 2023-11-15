@@ -1,9 +1,10 @@
+// import 'package:CleanCare/models/card_order.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/service/order_service.dart';
 
 class OrderDetailPage extends StatefulWidget {
-  const OrderDetailPage({Key? key, required this.id}) : super(key: key);
+  const OrderDetailPage({Key? key, required this.id});
 
   final String id;
 
@@ -13,7 +14,6 @@ class OrderDetailPage extends StatefulWidget {
 
 class _OrderDetailPageState extends State<OrderDetailPage> {
   Map<String, dynamic> order = {};
-
   final OrderService orderService = OrderService();
 
   @override
@@ -28,20 +28,45 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             DocumentSnapshot? item = snapshot.data;
+
             order = {
-              "email": item!['email'],
-              "nama paket": item['nama_paket'],
-              "quantity": item['quantity'],
-              "total": item['total'],
-              "tanggal order": item['tanggal_order'],
+              "email": item?['email'] ?? '',
+              "items": (item?['items'] as List<dynamic>?)
+                      ?.map<Map<String, dynamic>>((item) {
+                    if (item is Map<String, dynamic>) {
+                      return {
+                        "nama_paket": item['nama paket'],
+                        "quantity": item['quantity'],
+                        "total": item['total'],
+                      };
+                    } else {
+                      // Handle the case where 'items' is not a List<Map<String, dynamic>>
+                      return {};
+                    }
+                  }).toList() ??
+                  [],
+              "tanggal_order": (item?['tanggal order'] as Timestamp).toDate(),
             };
+
             return OrderDetailBody(
-              id: item.id,
-              email: item['email'],
-              namaPaket: item['nama_paket'],
-              quantity: item['quantity'],
-              total: item['total'],
-              tanggalOrder: item['tanggal_order'],
+              id: item!.id,
+              email: item!['email'],
+              items: (item['items'] as List<dynamic>?)
+                      ?.map<Map<String, dynamic>>((item) {
+                    if (item is Map<String, dynamic>) {
+                      return {
+                        "nama_paket": item['nama paket'],
+                        "quantity": item['quantity'],
+                        "total": item['total'],
+                      };
+                    } else {
+                      // Handle the case where 'items' is not a List<Map<String, dynamic>>
+                      return {};
+                    }
+                  }).toList() ??
+                  [],
+              tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
+              // status: getOrderStatus(history['status'] ?? ''),
               orderService: orderService,
             );
           } else {
@@ -59,52 +84,65 @@ class OrderDetailBody extends StatelessWidget {
   const OrderDetailBody({
     Key? key,
     required this.id,
-    required this.email,
-    required this.namaPaket,
-    required this.quantity,
-    required this.total,
-    required this.tanggalOrder,
+    this.email,
+    this.items,
+    this.tanggalOrder,
     required this.orderService,
-  }) : super(key: key);
+  });
 
   final String id;
-  final String email;
-  final String namaPaket;
-  final int quantity;
-  final double total;
-  final DateTime tanggalOrder;
-  final OrderService orderService;
+  final String? email;
+  final List<Map<String, dynamic>>? items;
+  final DateTime? tanggalOrder;
+  final OrderService? orderService;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Order ID: $id'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Email: $email'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Package Name: $namaPaket'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Quantity: $quantity'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Total: $total'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Order Date: $tanggalOrder'),
-        ),
-      ],
+    double estimasiTotal = items!
+        .map<double>((item) => (item['total'] as num).toDouble())
+        .fold(0, (a, b) => a + b);
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Order ID: $id',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'Email: $email',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(height: 16.0),
+          for (var item in items!)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${item['nama_paket']}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                ),
+                SizedBox(height: 8.0),
+                Text('Quantity: ${item['quantity']}'),
+                SizedBox(height: 8.0),
+                Text('Total: ${item['total']}'),
+                SizedBox(height: 16.0),
+              ],
+            ),
+          Text(
+            'Estimasi Total: $estimasiTotal',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            'Order Date: $tanggalOrder',
+            style: TextStyle(fontSize: 16.0),
+          ),
+        ],
+      ),
     );
   }
 }

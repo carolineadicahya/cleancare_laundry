@@ -3,19 +3,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/service/order_service.dart';
 
-class OrderDetailPage extends StatefulWidget {
-  const OrderDetailPage({Key? key, required this.id}) : super(key: key);
+class AdminOrderDetailPage extends StatefulWidget {
+  const AdminOrderDetailPage({Key? key, required this.id});
 
   final String id;
 
   @override
-  _OrderDetailPageState createState() => _OrderDetailPageState();
+  _AdminOrderDetailPageState createState() => _AdminOrderDetailPageState();
 }
 
-class _OrderDetailPageState extends State<OrderDetailPage> {
+class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
   Map<String, dynamic> order = {};
-
   final OrderService orderService = OrderService();
+
+  void _updateOrderStatus(String status) {
+    orderService.updateOrderStatus(widget.id, status as OrderStatus);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,23 +32,50 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             DocumentSnapshot? item = snapshot.data;
+
             order = {
-              "email": item!['email'],
-              "nama paket": item['nama_paket'],
-              "quantity": item['quantity'],
-              "total": item['total'],
-              "tanggal order": item['tanggal_order'],
-              "status": item['status']
+              "email": item?['email'] ?? '',
+              "items": (item?['items'] as List<dynamic>?)
+                      ?.map<Map<String, dynamic>>((item) {
+                    if (item is Map<String, dynamic>) {
+                      return {
+                        "nama_paket": item['nama paket'],
+                        "quantity": item['quantity'],
+                        "total": item['total'],
+                      };
+                    } else {
+                      return {};
+                    }
+                  }).toList() ??
+                  [],
+              "tanggal_order": (item?['tanggal order'] as Timestamp).toDate(),
             };
+
             return OrderDetailBody(
-              id: item.id,
-              email: item['email'],
-              namaPaket: item['nama_paket'],
-              quantity: item['quantity'],
-              total: item['total'],
-              tanggalOrder: item['tanggal_order'],
-              status: item['status'],
+              id: item!.id,
+              email: item!['email'],
+              items: (item['items'] as List<dynamic>?)
+                      ?.map<Map<String, dynamic>>((item) {
+                    if (item is Map<String, dynamic>) {
+                      return {
+                        "nama_paket": item['nama paket'],
+                        "quantity": item['quantity'],
+                        "total": item['total'],
+                      };
+                    } else {
+                      return {};
+                    }
+                  }).toList() ??
+                  [],
+              tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
               orderService: orderService,
+              onUpdateStatus: (status) {
+                _updateOrderStatus(status);
+                // Update the status in the OrderCard by calling the callback
+                setState(() {
+                  order['status'] = status;
+                });
+              },
             );
           } else {
             return Center(
@@ -62,100 +92,84 @@ class OrderDetailBody extends StatelessWidget {
   const OrderDetailBody({
     Key? key,
     required this.id,
-    required this.email,
-    required this.namaPaket,
-    required this.quantity,
-    required this.total,
-    required this.tanggalOrder,
-    required this.status,
+    this.email,
+    this.items,
+    this.tanggalOrder,
     required this.orderService,
-  }) : super(key: key);
+    required this.onUpdateStatus,
+  });
 
   final String id;
-  final String email;
-  final String namaPaket;
-  final int quantity;
-  final double total;
-  final DateTime tanggalOrder;
-  final String status;
-  final OrderService orderService;
+  final String? email;
+  final List<Map<String, dynamic>>? items;
+  final DateTime? tanggalOrder;
+  final OrderService? orderService;
+  final void Function(String) onUpdateStatus;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Order ID: $id'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Email: $email'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Package Name: $namaPaket'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Quantity: $quantity'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Total: $total'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Order Date: $tanggalOrder'),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Status: $status'),
-        ),
-        SizedBox(height: 16.0),
+    double estimasiTotal = items!
+        .map<double>((item) => (item['total'] as num).toDouble())
+        .fold(0, (a, b) => a + b);
 
-        // Tombol untuk mengubah status menjadi "Dalam Pengerjaan"
-        if (status != 'Dalam Pengerjaan')
-          ElevatedButton(
-            onPressed: () {
-              updateOrderStatus(context, 'Dalam Pengerjaan');
-            },
-            child: Text('Mulai Pengerjaan'),
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Order ID: $id',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
           ),
-        SizedBox(height: 8.0),
-
-        // Tombol untuk mengubah status menjadi "Pesanan Selesai"
-        if (status != 'Pesanan Selesai')
-          ElevatedButton(
-            onPressed: () {
-              updateOrderStatus(context, 'Pesanan Selesai');
-            },
-            child: Text('Selesaikan Pesanan'),
+          SizedBox(height: 8.0),
+          Text(
+            'Email: $email',
+            style: TextStyle(fontSize: 16.0),
           ),
-        SizedBox(height: 8.0),
-
-        // Tombol untuk mengubah status menjadi "Cancel"
-        if (status != 'Cancel')
-          ElevatedButton(
-            onPressed: () {
-              updateOrderStatus(context, 'Cancel');
-            },
-            style: ElevatedButton.styleFrom(primary: Colors.red),
-            child: Text('Cancel Pesanan'),
+          SizedBox(height: 16.0),
+          for (var item in items!)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${item['nama_paket']}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                ),
+                SizedBox(height: 8.0),
+                Text('Quantity: ${item['quantity']}'),
+                SizedBox(height: 8.0),
+                Text('Total: ${item['total']}'),
+                SizedBox(height: 16.0),
+              ],
+            ),
+          Text(
+            'Estimasi Total: $estimasiTotal',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
           ),
-      ],
-    );
-  }
-
-  void updateOrderStatus(BuildContext context, String newStatus) {
-    // Panggil fungsi orderService untuk memperbarui status pesanan
-    orderService.updateOrderStatus(id, newStatus as OrderStatus);
-
-    // Tampilkan snackbar atau pesan sukses atau handle logika sesuai kebutuhan
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Status pesanan berhasil diubah menjadi $newStatus'),
+          SizedBox(height: 16.0),
+          Text(
+            'Order Date: $tanggalOrder',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(height: 8.0),
+          ElevatedButton(
+            onPressed: () => onUpdateStatus('Dalam Pengerjaan'),
+            child: Text('Dalam Pengerjaan'),
+          ),
+          SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: () => onUpdateStatus('Pesanan Selesai'),
+            child: Text('Pesanan Selesai'),
+          ),
+          SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: () => onUpdateStatus('Cancel'),
+            child: Text('Cancel'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }

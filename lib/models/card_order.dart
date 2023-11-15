@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 enum OrderStatus { DITERIMA, DALAM_PENGERJAAN, SELESAI, CANCEL }
 
 class OrderCard extends StatelessWidget {
-  OrderCard({
-    required this.id,
+  const OrderCard({
     required this.email,
     required this.items,
     required this.orderDate,
@@ -12,7 +11,6 @@ class OrderCard extends StatelessWidget {
     required this.onDetail,
   });
 
-  final String id;
   final String email;
   final List<Map<String, dynamic>> items;
   final DateTime orderDate;
@@ -21,10 +19,10 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String statusText = getStatusText(status);
+    String _status = getStatusText(status);
 
     return InkWell(
-      onTap: () => onDetail(id), // Pass the id to the onDetail function
+      onTap: () => onDetail(), // Pass the id to the onDetail function
       child: Container(
         margin: EdgeInsets.all(6.0),
         child: Card(
@@ -35,13 +33,13 @@ class OrderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Diterima: ${orderDate.toString()}'),
-                Text('Status: $statusText',
+                Text('Status: $_status',
                     style: TextStyle(color: getStatusColor(status))),
               ],
             ),
             trailing: ElevatedButton(
               onPressed: () =>
-                  onDetail(id), // Pass the id to the onDetail function
+                  onDetail(), // Pass the id to the onDetail function
               child: Text('Detail'),
             ),
           ),

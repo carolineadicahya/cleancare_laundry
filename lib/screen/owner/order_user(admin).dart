@@ -1,5 +1,5 @@
 import 'package:CleanCare/models/card_order.dart';
-import 'package:CleanCare/screen/user/detail_order.dart';
+import 'package:CleanCare/screen/owner/detail_order_user(admin).dart';
 import 'package:CleanCare/service/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -40,7 +40,6 @@ class _OrderUserState extends State<OrderUser> {
                   final textColor = isCancelled ? Colors.red : Colors.green;
 
                   return OrderCard(
-                    id: history['id'] ?? '',
                     email: history['email'] ?? '',
                     items: (history['items'] as List<dynamic>?)
                             ?.map<Map<String, dynamic>>((item) {
@@ -57,11 +56,11 @@ class _OrderUserState extends State<OrderUser> {
                             DateTime.now(),
                     status: getOrderStatus(history['status'] ?? ''),
                     onDetail: () {
-                      final String? id = history[index].id;
+                      final String id = items[index].id;
                       if (id != null) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => OrderDetailPage(
+                            builder: (context) => AdminOrderDetailPage(
                               id: id,
                             ),
                           ),

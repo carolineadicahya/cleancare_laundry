@@ -14,7 +14,9 @@ class OrderService {
   // READ: ambil data detail Order get by id
   Stream<DocumentSnapshot<Map<String, dynamic>>> getDetail(String id) {
     final dataStream = db.doc(id).snapshots();
-    return dataStream;
+    return dataStream.map(
+      (snapshot) => snapshot as DocumentSnapshot<Map<String, dynamic>>,
+    );
   }
 
   // ADD: tambah orderan
