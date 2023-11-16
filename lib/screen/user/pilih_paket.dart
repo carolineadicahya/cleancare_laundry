@@ -39,12 +39,12 @@ class _AddOrderState extends State<AddOrder> {
         title: Text('Paket Laundry'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              StreamBuilder(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder(
                 stream: laundryService.getData(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -65,7 +65,7 @@ class _AddOrderState extends State<AddOrder> {
                             ),
                           ),
                           subtitle: Text(
-                            'Rp${(data['price'])}',
+                            'Rp.${(data['price'])}',
                             style: const TextStyle(
                               fontSize: 14.0,
                             ),
@@ -117,26 +117,26 @@ class _AddOrderState extends State<AddOrder> {
                   );
                 },
               ),
-              Text("Total Harga Rp. ${total.toString()}"),
-              ElevatedButton(
-                onPressed: () async {
-                  // Order button clicked, create a new order
-                  await createNewOrder();
-                },
-                child: Text('Order'),
-              ),
-              Text(
-                'Catatan:\n'
-                '1. Order Layanan hanya tersedia 2 hari, jika lebih harus order ulang.\n'
-                '2. Pengambilan cucian harus disertai nota.\n'
-                '3. Rusak atau hilang akan dikenakan potongan biaya / diskon.\n'
-                '4. Cucian yang tidak diambil dalam 30 hari, bukan tanggung jawab kami.\n'
-                '5. Kami tidak bertanggung jawab terhadap barang berharga yang tertinggal bersama cucian.\n'
-                '6. Kami tidak bertanggung jawab apabila susut / mengecil / luntur dari sifat-sifat bahan.',
-                style: TextStyle(fontSize: 14.0),
-              ),
-            ],
-          ),
+            ),
+            Text("Total Harga Rp. ${total.toString()}"),
+            ElevatedButton(
+              onPressed: () async {
+                // Order button clicked, create a new order
+                await createNewOrder();
+              },
+              child: Text('Order'),
+            ),
+            Text(
+              'Catatan:\n'
+              '1. Order Layanan hanya tersedia 2 hari, jika lebih harus order ulang.\n'
+              '2. Pengambilan cucian harus disertai nota.\n'
+              '3. Rusak atau hilang akan dikenakan potongan biaya / diskon.\n'
+              '4. Cucian yang tidak diambil dalam 30 hari, bukan tanggung jawab kami.\n'
+              '5. Kami tidak bertanggung jawab terhadap barang berharga yang tertinggal bersama cucian.\n'
+              '6. Kami tidak bertanggung jawab apabila susut / mengecil / luntur dari sifat-sifat bahan.',
+              style: TextStyle(fontSize: 12.0),
+            ),
+          ],
         ),
       ),
     );

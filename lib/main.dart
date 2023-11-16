@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
           title: 'CleanCare',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
+            primaryColor: Colors.blue,
             scaffoldBackgroundColor: Constants.scaffoldBackgroundColor,
             visualDensity: VisualDensity.adaptivePlatformDensity,
             textTheme: GoogleFonts.poppinsTextTheme(),

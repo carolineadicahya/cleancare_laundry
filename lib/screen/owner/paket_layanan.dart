@@ -89,28 +89,28 @@ class _LaundryServicePageState extends State<LaundryServicePage> {
         title: Text('Paket Laundry'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: serviceNameController,
-                decoration: InputDecoration(labelText: 'Layanan'),
-              ),
-              TextField(
-                controller: servicePriceController,
-                decoration: InputDecoration(labelText: 'Harga'),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => isEditing ? editService() : addService(),
-                child: Text(isEditing ? 'Perbarui Layanan' : 'Tambah Layanan'),
-              ),
-              SizedBox(height: 16),
-              Text('Daftar Layanan:'),
-              StreamBuilder(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: serviceNameController,
+              decoration: InputDecoration(labelText: 'Layanan'),
+            ),
+            TextField(
+              controller: servicePriceController,
+              decoration: InputDecoration(labelText: 'Harga'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => isEditing ? editService() : addService(),
+              child: Text(isEditing ? 'Perbarui Layanan' : 'Tambah Layanan'),
+            ),
+            SizedBox(height: 16),
+            Text('Daftar Layanan:'),
+            Expanded(
+              child: StreamBuilder(
                 stream: laundryService.getData(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -157,9 +157,9 @@ class _LaundryServicePageState extends State<LaundryServicePage> {
                     child: CircularProgressIndicator(),
                   );
                 },
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );
