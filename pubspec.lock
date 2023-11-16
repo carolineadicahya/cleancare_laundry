@@ -321,6 +321,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.8.1"
+  firebase_messaging:
+    dependency: "direct main"
+    description:
+      name: firebase_messaging
+      sha256: "9922476db960b4044a6e65152f2695d9d6eaa6658db9aa9915c47bf38b572359"
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.7.4"
+  firebase_messaging_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_messaging_platform_interface
+      sha256: "4d18606a988337911c2572afe1b946b5c7ad5a3444864b4468ed686ca9f5cd5a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.5.13"
+  firebase_messaging_web:
+    dependency: transitive
+    description:
+      name: firebase_messaging_web
+      sha256: "22a16175e204439156ba5f6396cd9ca4b74799744d7dbc8faa1d27efbaec7f1c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.13"
   firebase_storage:
     dependency: "direct main"
     description:
@@ -784,6 +808,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.3"
+  push:
+    dependency: "direct main"
+    description:
+      name: push
+      sha256: "7de94d9f956e8b2f6a7a8d5adc3ab69ffcea4cf8ac120bce083f531bc9f44750"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
+  push_android:
+    dependency: transitive
+    description:
+      name: push_android
+      sha256: "1ae53ceee5d2c489102f7ae53ec1331e949dbba787cc4ff191ffe8b7b0965c17"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
+  push_ios:
+    dependency: transitive
+    description:
+      name: push_ios
+      sha256: "3c57bdcedc3fef55e827fbfb88ffbf69f3603432c0a13cf282e294aa92246913"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.4"
+  push_macos:
+    dependency: transitive
+    description:
+      name: push_macos
+      sha256: "800997d1d6ca19aa957ab237a25074a732a7e36ef917ef4546fc75ec9aa1b9da"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
+  push_platform_interface:
+    dependency: transitive
+    description:
+      name: push_platform_interface
+      sha256: bcee018300ecf25d95fe55150f6c9ffe5a467a2c6df94e4c2e277c40282b95a0
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   sanitize_html:
     dependency: transitive
     description:

@@ -59,6 +59,8 @@ dependencies:
   dropdown_below: ^1.0.3
   image_picker: ^1.0.4
   flutter_profile_picture: ^2.0.0
+  push: ^1.0.5
+  firebase_messaging: ^14.7.4
 
 dev_dependencies:
   flutter_test:

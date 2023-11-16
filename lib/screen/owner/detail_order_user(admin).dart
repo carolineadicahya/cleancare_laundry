@@ -1,4 +1,3 @@
-import 'package:CleanCare/models/card_order.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/service/order_service.dart';
@@ -28,6 +27,8 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             DocumentSnapshot? item = snapshot.data;
+            DateTime? tanggalOrder =
+                (item?['tanggal order'] as Timestamp).toDate();
 
             order = {
               "email": item?['email'] ?? '',
@@ -64,6 +65,7 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                   }).toList() ??
                   [],
               tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
+              estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
               orderService: orderService,
               onUpdateStatus: (status) {
                 orderService.updateOrderStatus(widget.id, status);
@@ -91,6 +93,7 @@ class OrderDetailBody extends StatelessWidget {
     this.email,
     this.items,
     this.tanggalOrder,
+    this.estimasiSelesai,
     required this.orderService,
     required this.onUpdateStatus,
   });
@@ -99,6 +102,7 @@ class OrderDetailBody extends StatelessWidget {
   final String? email;
   final List<Map<String, dynamic>>? items;
   final DateTime? tanggalOrder;
+  final DateTime? estimasiSelesai;
   final OrderService? orderService;
   final void Function(String) onUpdateStatus;
 
@@ -144,7 +148,12 @@ class OrderDetailBody extends StatelessWidget {
           ),
           SizedBox(height: 16.0),
           Text(
-            'Order Date: $tanggalOrder',
+            'Tanggal Order: $tanggalOrder',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'Estimasi Selesai: $estimasiSelesai',
             style: TextStyle(fontSize: 16.0),
           ),
           SizedBox(height: 8.0),

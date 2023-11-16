@@ -28,6 +28,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             DocumentSnapshot? item = snapshot.data;
+            DateTime? tanggalOrder =
+                (item?['tanggal order'] as Timestamp).toDate();
 
             order = {
               "email": item?['email'] ?? '',
@@ -66,7 +68,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   }).toList() ??
                   [],
               tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
-              // status: getOrderStatus(history['status'] ?? ''),
+              estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
               orderService: orderService,
             );
           } else {
@@ -87,6 +89,7 @@ class OrderDetailBody extends StatelessWidget {
     this.email,
     this.items,
     this.tanggalOrder,
+    this.estimasiSelesai,
     required this.orderService,
   });
 
@@ -94,6 +97,7 @@ class OrderDetailBody extends StatelessWidget {
   final String? email;
   final List<Map<String, dynamic>>? items;
   final DateTime? tanggalOrder;
+  final DateTime? estimasiSelesai;
   final OrderService? orderService;
 
   @override
@@ -138,7 +142,11 @@ class OrderDetailBody extends StatelessWidget {
           ),
           SizedBox(height: 16.0),
           Text(
-            'Order Date: $tanggalOrder',
+            'Tanggal Order: $tanggalOrder',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          Text(
+            'Estimasi Selesai: $estimasiSelesai',
             style: TextStyle(fontSize: 16.0),
           ),
         ],
