@@ -18,6 +18,7 @@ class _AddOrderState extends State<AddOrder> {
   void initState() {
     super.initState();
 
+    // Fetch laundry items data
     laundryService.getData().listen((querySnapshot) {
       setState(() {
         item = querySnapshot.docs.map((doc) {
@@ -121,8 +122,29 @@ class _AddOrderState extends State<AddOrder> {
             Text("Total Harga Rp. ${total.toString()}"),
             ElevatedButton(
               onPressed: () async {
-                // Order button clicked, create a new order
-                await createNewOrder();
+                // Check if there are selected items before creating an order
+                if (total > 0) {
+                  await createNewOrder();
+                } else {
+                  // Show error dialog for empty selectedItems
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Terjadi Kesalahan'),
+                        content: Text('Silahkan Pilih Paket Laundry!'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               },
               child: Text('Order'),
             ),
@@ -134,7 +156,7 @@ class _AddOrderState extends State<AddOrder> {
               '4. Cucian yang tidak diambil dalam 30 hari, bukan tanggung jawab kami.\n'
               '5. Kami tidak bertanggung jawab terhadap barang berharga yang tertinggal bersama cucian.\n'
               '6. Kami tidak bertanggung jawab apabila susut / mengecil / luntur dari sifat-sifat bahan.',
-              style: TextStyle(fontSize: 12.0),
+              style: TextStyle(fontSize: 12.5),
             ),
           ],
         ),
@@ -166,8 +188,6 @@ class _AddOrderState extends State<AddOrder> {
       'tanggal order': DateTime.now(),
     };
 
-    print(orderData);
-
     // Call the OrderService to add the order to Firestore
     var orderId = await orderService.addOrder(orderData);
 
@@ -175,35 +195,19 @@ class _AddOrderState extends State<AddOrder> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        if (selectedItems.isNotEmpty) {
-          // Order berhasil
-          return AlertDialog(
-            title: Text('Order Berhasil'),
-            content: Text('Ordermu telah terkirim dengan ID Order: $orderId'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        } else {
-          // Terjadi kesalahan
-          return AlertDialog(
-            title: Text('Terjadi Kesalahan'),
-            content: Text('Silahkan Pilih Paket Laundry!'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        }
+        // Order berhasil
+        return AlertDialog(
+          title: Text('Order Berhasil'),
+          content: Text('Ordermu telah terkirim dengan ID Order: $orderId'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
       },
     );
   }

@@ -4,6 +4,7 @@ import 'package:CleanCare/service/order_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({Key? key});
@@ -24,16 +25,18 @@ class _OrderPageState extends State<OrderPage> {
         title: const Text('Order Laundry'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Expanded(
           child: StreamBuilder<QuerySnapshot>(
             stream: orderService.getData(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(child: CircularProgressIndicator());
               }
+
               var items = snapshot.data!.docs;
+
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: items.length,
@@ -67,10 +70,6 @@ class _OrderPageState extends State<OrderPage> {
                           ),
                         );
                       }
-                      // else {
-                      //   // Handle the case where 'id' is null, for example, show an error message.
-                      //   print("ID Order tidak ditemukan");
-                      // }
                     },
                   );
                 },
@@ -79,7 +78,26 @@ class _OrderPageState extends State<OrderPage> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openWhatsApp,
+        label: Text("Chat Admin"),
+        backgroundColor:
+            Color.fromARGB(255, 81, 207, 85), // Change to the desired color
+      ),
     );
+  }
+
+  Future<void> _openWhatsApp() async {
+    // Replace the phone number with the desired number
+    String phoneNumber = "+6281549205176";
+    // Create the WhatsApp URL
+    String url = "https://wa.me/$phoneNumber";
+    // Check if the WhatsApp app is installed and launch the URL
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   OrderStatus getOrderStatus(String status) {
@@ -93,8 +111,7 @@ class _OrderPageState extends State<OrderPage> {
       case 'Cancel':
         return OrderStatus.CANCEL;
       default:
-        return OrderStatus
-            .DITERIMA; // Default status jika tidak sesuai dengan yang diharapkan
+        return OrderStatus.DITERIMA;
     }
   }
 }
