@@ -25,7 +25,7 @@ class OrderService {
     return result.id;
   }
 
-// UPDATE: perbarui order
+  // UPDATE: perbarui order
   Future<void> updateOrder(String id, Map<String, dynamic> body) {
     return db.doc(id).update(body);
   }
@@ -35,5 +35,7 @@ class OrderService {
     return db.doc(id).delete();
   }
 
-  void updateOrderStatus(String id, OrderStatus cancel) {}
+  Future<void> updateOrderStatus(String id, String newStatus) async {
+    await db.doc(id).update({'status': newStatus});
+  }
 }

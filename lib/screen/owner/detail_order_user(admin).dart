@@ -16,10 +16,6 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
   Map<String, dynamic> order = {};
   final OrderService orderService = OrderService();
 
-  void _updateOrderStatus(String status) {
-    orderService.updateOrderStatus(widget.id, status as OrderStatus);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +66,7 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
               tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
               orderService: orderService,
               onUpdateStatus: (status) {
-                _updateOrderStatus(status);
+                orderService.updateOrderStatus(widget.id, status);
                 // Update the status in the OrderCard by calling the callback
                 setState(() {
                   order['status'] = status;
