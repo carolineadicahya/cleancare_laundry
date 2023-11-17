@@ -43,11 +43,12 @@ class _CreateAccountState extends State<CreateAccount> {
 
       if (user != null) {
         await user.sendEmailVerification();
-        db
+        await db
             .collection('user')
             .doc(user!.uid)
             .set(body)
             .onError((e, _) => print("Error writing document: $e"));
+        await Future.delayed(Duration(milliseconds: 100));
         showDialog(
           context: context,
           builder: (context) {
@@ -96,7 +97,7 @@ class _CreateAccountState extends State<CreateAccount> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Hayu Error'),
+          title: const Text('Kesalahan'),
           content: Text(errorMessage),
           actions: <Widget>[
             TextButton(

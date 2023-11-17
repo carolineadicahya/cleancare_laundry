@@ -1,4 +1,4 @@
-import 'package:CleanCare/models/card_order.dart';
+// import 'package:CleanCare/models/card_order.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderService {
@@ -10,6 +10,22 @@ class OrderService {
         db.orderBy('tanggal order', descending: true).snapshots();
     return dataStream;
   }
+
+  // READ: ambil data get by email
+  // Stream<QuerySnapshot> getDataUser(String? email) {
+  //   if (email != null) {
+  //     final dataStream = db
+  //         .where('email', isEqualTo: email)
+  //         .orderBy('tanggal order', descending: true)
+  //         .snapshots();
+
+  //     return dataStream;
+  //   } else {
+  //     // Handle the case where userEmail is null
+  //     // For example, you might want to return an empty stream
+  //     return Stream.empty();
+  //   }
+  // }
 
   // READ: ambil data detail Order get by id
   Stream<DocumentSnapshot<Map<String, dynamic>>> getDetail(String id) {

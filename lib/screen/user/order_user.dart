@@ -36,12 +36,16 @@ class _OrderPageState extends State<OrderPage> {
               }
 
               var items = snapshot.data!.docs;
+              var userOrders = items
+                  .where((order) => order['email'] == user?.email)
+                  .toList();
 
               return ListView.builder(
                 shrinkWrap: true,
-                itemCount: items.length,
+                itemCount: userOrders.length,
                 itemBuilder: (context, index) {
-                  final history = items[index].data() as Map<String, dynamic>;
+                  final history =
+                      userOrders[index].data() as Map<String, dynamic>;
                   final isCancelled = history['status'] == 'Cancel';
                   final textColor = isCancelled ? Colors.red : Colors.green;
 
@@ -60,7 +64,7 @@ class _OrderPageState extends State<OrderPage> {
                     orderDate: (history['tanggal order'] as Timestamp).toDate(),
                     status: getOrderStatus(history['status'] ?? ''),
                     onDetail: () {
-                      final String id = items[index].id;
+                      final String id = userOrders[index].id;
                       if (id != null) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
