@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -57,8 +54,18 @@ class DefaultFirebaseOptions {
     appId: '1:622236288843:android:29efbcdd6380911cc4cace',
     messagingSenderId: '622236288843',
     projectId: 'cleancare-database',
-    databaseURL:
-        'https://cleancare-database-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL: 'https://cleancare-database-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'cleancare-database.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDgYEloaHYpWojltU3Tx3uv0TX6HFxbkcI',
+    appId: '1:622236288843:ios:4ed93e1e6069022ac4cace',
+    messagingSenderId: '622236288843',
+    projectId: 'cleancare-database',
+    databaseURL: 'https://cleancare-database-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'cleancare-database.appspot.com',
+    iosClientId: '622236288843-v2466l55vrl4r2ce8r6akul02o9e0cbt.apps.googleusercontent.com',
+    iosBundleId: 'com.cleancare.laundryapp',
   );
 }

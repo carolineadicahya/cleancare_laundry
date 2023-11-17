@@ -3,6 +3,7 @@ import 'package:CleanCare/screen/owner/layout_admin.dart';
 import 'package:CleanCare/screen/user/dashboard_user.dart';
 import 'package:CleanCare/screen/user/history.dart';
 import 'package:CleanCare/screen/user/layout_user.dart';
+import 'package:CleanCare/service/notifikasi_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:CleanCare/firebase_options.dart';
@@ -17,6 +18,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.android,
   );
+  // await NotifikasiService().initNotifikasi();
   runApp(const MyApp());
 }
 

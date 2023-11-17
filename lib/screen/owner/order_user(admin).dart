@@ -21,9 +21,9 @@ class _OrderUserState extends State<OrderUser> {
         title: const Text('Order User'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Expanded(
           child: StreamBuilder<QuerySnapshot>(
             stream: orderService.getData(),
             builder: (context, snapshot) {

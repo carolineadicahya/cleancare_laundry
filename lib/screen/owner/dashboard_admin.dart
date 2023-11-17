@@ -121,18 +121,13 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                                     );
                                   },
                                 );
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const Login()),
-                                );
                               },
                               child: const Icon(
                                 IconData(0xf88b, fontFamily: 'MaterialIcons'),
                                 color: Colors.white,
                                 size: 24.0,
                               ),
-                            ),
+                            )
                           ],
                         ),
                         Row(

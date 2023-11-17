@@ -1,6 +1,8 @@
+// import 'package:CleanCare/service/notifikasi_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/service/order_service.dart';
+import 'package:intl/intl.dart';
 
 class AdminOrderDetailPage extends StatefulWidget {
   const AdminOrderDetailPage({Key? key, required this.id});
@@ -14,6 +16,7 @@ class AdminOrderDetailPage extends StatefulWidget {
 class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
   Map<String, dynamic> order = {};
   final OrderService orderService = OrderService();
+  // final NotifikasiService notifikasiService = NotifikasiService();
 
   @override
   Widget build(BuildContext context) {
@@ -22,68 +25,82 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
         title: Text('Order Detail'),
         centerTitle: true,
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: orderService.getDetail(widget.id),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            DocumentSnapshot? item = snapshot.data;
-            DateTime? tanggalOrder =
-                (item?['tanggal order'] as Timestamp).toDate();
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Expanded(
+          child: StreamBuilder<DocumentSnapshot>(
+            stream: orderService.getDetail(widget.id),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                DocumentSnapshot? item = snapshot.data;
+                DateTime? tanggalOrder =
+                    (item?['tanggal order'] as Timestamp).toDate();
 
-            order = {
-              "email": item?['email'] ?? '',
-              "items": (item?['items'] as List<dynamic>?)
-                      ?.map<Map<String, dynamic>>((item) {
-                    if (item is Map<String, dynamic>) {
-                      return {
-                        "nama_paket": item['nama paket'],
-                        "quantity": item['quantity'],
-                        "total": item['total'],
-                      };
-                    } else {
-                      return {};
-                    }
-                  }).toList() ??
-                  [],
-              "tanggal_order": (item?['tanggal order'] as Timestamp).toDate(),
-            };
+                order = {
+                  "email": item?['email'] ?? '',
+                  "items": (item?['items'] as List<dynamic>?)
+                          ?.map<Map<String, dynamic>>((item) {
+                        if (item is Map<String, dynamic>) {
+                          return {
+                            "nama_paket": item['nama paket'],
+                            "quantity": item['quantity'],
+                            "total": item['total'],
+                          };
+                        } else {
+                          return {};
+                        }
+                      }).toList() ??
+                      [],
+                  "tanggal_order":
+                      (item?['tanggal order'] as Timestamp).toDate(),
+                };
 
-            return OrderDetailBody(
-              id: item!.id,
-              email: item!['email'],
-              items: (item['items'] as List<dynamic>?)
-                      ?.map<Map<String, dynamic>>((item) {
-                    if (item is Map<String, dynamic>) {
-                      return {
-                        "nama_paket": item['nama paket'],
-                        "quantity": item['quantity'],
-                        "total": item['total'],
-                      };
-                    } else {
-                      return {};
-                    }
-                  }).toList() ??
-                  [],
-              tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
-              estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
-              orderService: orderService,
-              onUpdateStatus: (status) {
-                orderService.updateOrderStatus(widget.id, status);
-                // Update the status in the OrderCard by calling the callback
-                setState(() {
-                  order['status'] = status;
-                });
-              },
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+                return OrderDetailBody(
+                  id: item!.id,
+                  email: item!['email'],
+                  items: (item['items'] as List<dynamic>?)
+                          ?.map<Map<String, dynamic>>((item) {
+                        if (item is Map<String, dynamic>) {
+                          return {
+                            "nama_paket": item['nama paket'],
+                            "quantity": item['quantity'],
+                            "total": item['total'],
+                          };
+                        } else {
+                          return {};
+                        }
+                      }).toList() ??
+                      [],
+                  tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
+                  estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
+                  orderService: orderService,
+                  onUpdateStatus: (status) {
+                    orderService.updateOrderStatus(widget.id, status);
+                    // Update the status in the OrderCard by calling the callback
+                    setState(() {
+                      order['status'] = status;
+                    });
+                    // sendNotification(status);
+                  },
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
+        ),
       ),
     );
   }
+
+  // void sendNotification(String status) {
+  //   // Customize the notification message based on the status
+  //   String notificationMessage = 'Laundry anda $status';
+  //   String fCMToken = order['userFCMToken'] ?? '';
+  //   print(notificationMessage);
+  // }
 }
 
 class OrderDetailBody extends StatelessWidget {
@@ -148,12 +165,11 @@ class OrderDetailBody extends StatelessWidget {
           ),
           SizedBox(height: 16.0),
           Text(
-            'Tanggal Order: $tanggalOrder',
+            'Tanggal Order: ${DateFormat('dd MMMM yyyy').format(tanggalOrder!)}',
             style: TextStyle(fontSize: 16.0),
           ),
-          SizedBox(height: 8.0),
           Text(
-            'Estimasi Selesai: $estimasiSelesai',
+            'Estimasi Selesai: ${DateFormat('dd MMMM yyyy').format(estimasiSelesai!)}',
             style: TextStyle(fontSize: 16.0),
           ),
           SizedBox(height: 8.0),
@@ -161,12 +177,12 @@ class OrderDetailBody extends StatelessWidget {
             onPressed: () => onUpdateStatus('Dalam Pengerjaan'),
             child: Text('Dalam Pengerjaan'),
           ),
-          SizedBox(height: 16.0),
+          SizedBox(height: 8.0),
           ElevatedButton(
             onPressed: () => onUpdateStatus('Pesanan Selesai'),
             child: Text('Pesanan Selesai'),
           ),
-          SizedBox(height: 16.0),
+          SizedBox(height: 8.0),
           ElevatedButton(
             onPressed: () => onUpdateStatus('Cancel'),
             child: Text('Cancel'),

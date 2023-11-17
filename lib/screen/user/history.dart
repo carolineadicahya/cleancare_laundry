@@ -53,18 +53,22 @@ class _HistoryOrderState extends State<HistoryOrder> {
                         children: [
                           TextSpan(
                             text: "Details About\n",
-                            style:
-                                Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.white,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Colors.white,
+                                ),
                           ),
                           TextSpan(
                             text: "Order #521",
-                            style:
-                                Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ],
                       ),
@@ -88,12 +92,14 @@ class _HistoryOrderState extends State<HistoryOrder> {
                         children: [
                           Text(
                             "Order Details",
-                            style:
-                                Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Color.fromRGBO(74, 77, 84, 1),
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w800,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Color.fromRGBO(74, 77, 84, 1),
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w800,
+                                ),
                           ),
                           SizedBox(
                             height: 6.0,
@@ -149,12 +155,14 @@ class _HistoryOrderState extends State<HistoryOrder> {
                         children: [
                           Text(
                             "Your clothes are now washing.",
-                            style:
-                                Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Color.fromRGBO(74, 77, 84, 1),
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w800,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Color.fromRGBO(74, 77, 84, 1),
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w800,
+                                ),
                           ),
                           SizedBox(
                             height: 5.0,

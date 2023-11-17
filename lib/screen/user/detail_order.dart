@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/service/order_service.dart';
+import 'package:intl/intl.dart';
 
 class OrderDetailPage extends StatefulWidget {
   const OrderDetailPage({Key? key, required this.id});
@@ -141,11 +142,11 @@ class OrderDetailBody extends StatelessWidget {
           ),
           SizedBox(height: 16.0),
           Text(
-            'Tanggal Order: $tanggalOrder',
+            'Tanggal Order: ${DateFormat('dd MMMM yyyy').format(tanggalOrder!)}',
             style: TextStyle(fontSize: 16.0),
           ),
           Text(
-            'Estimasi Selesai: $estimasiSelesai',
+            'Estimasi Selesai: ${DateFormat('dd MMMM yyyy').format(estimasiSelesai!)}',
             style: TextStyle(fontSize: 16.0),
           ),
         ],
