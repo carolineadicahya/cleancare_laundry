@@ -1,4 +1,4 @@
-// import 'package:CleanCare/service/notifikasi_service.dart';
+import 'package:CleanCare/service/notifikasi_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/service/order_service.dart';
@@ -16,7 +16,7 @@ class AdminOrderDetailPage extends StatefulWidget {
 class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
   Map<String, dynamic> order = {};
   final OrderService orderService = OrderService();
-  // final NotifikasiService notifikasiService = NotifikasiService();
+  final NotifikasiService notifikasiService = NotifikasiService();
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +72,17 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                       }).toList() ??
                       [],
                   tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
-                  estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
+                  estimasiSelesai: tanggalOrder?.add(Duration(days: 7)),
                   orderService: orderService,
+                  notifikasiService: notifikasiService,
                   onUpdateStatus: (status) {
                     orderService.updateOrderStatus(widget.id, status);
                     // Update the status in the OrderCard by calling the callback
                     setState(() {
                       order['status'] = status;
                     });
-                    // sendNotification(status);
+                    notifikasiService.sendStatusNotification(
+                        order['email'], status);
                   },
                 );
               } else {
@@ -94,13 +96,6 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
       ),
     );
   }
-
-  // void sendNotification(String status) {
-  //   // Customize the notification message based on the status
-  //   String notificationMessage = 'Laundry anda $status';
-  //   String fCMToken = order['userFCMToken'] ?? '';
-  //   print(notificationMessage);
-  // }
 }
 
 class OrderDetailBody extends StatelessWidget {
@@ -113,6 +108,7 @@ class OrderDetailBody extends StatelessWidget {
     this.estimasiSelesai,
     required this.orderService,
     required this.onUpdateStatus,
+    required this.notifikasiService,
   });
 
   final String id;
@@ -122,6 +118,7 @@ class OrderDetailBody extends StatelessWidget {
   final DateTime? estimasiSelesai;
   final OrderService? orderService;
   final void Function(String) onUpdateStatus;
+  final NotifikasiService? notifikasiService;
 
   @override
   Widget build(BuildContext context) {
@@ -179,12 +176,12 @@ class OrderDetailBody extends StatelessWidget {
           ),
           SizedBox(height: 8.0),
           ElevatedButton(
-            onPressed: () => onUpdateStatus('Pesanan Selesai'),
+            onPressed: () => onUpdateStatus('Selesai'),
             child: Text('Pesanan Selesai'),
           ),
           SizedBox(height: 8.0),
           ElevatedButton(
-            onPressed: () => onUpdateStatus('Cancel'),
+            onPressed: () => onUpdateStatus('di Cancel'),
             child: Text('Cancel'),
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.red),

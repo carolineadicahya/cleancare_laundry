@@ -1,5 +1,6 @@
 import 'package:CleanCare/models/card_order.dart';
 import 'package:CleanCare/screen/owner/detail_order_user(admin).dart';
+import 'package:CleanCare/service/notifikasi_service.dart';
 import 'package:CleanCare/service/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +14,7 @@ class OrderUser extends StatefulWidget {
 
 class _OrderUserState extends State<OrderUser> {
   OrderService orderService = OrderService();
+  NotifikasiService notifikasiService = NotifikasiService();
 
   @override
   Widget build(BuildContext context) {

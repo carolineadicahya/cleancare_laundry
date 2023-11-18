@@ -48,7 +48,7 @@ class _CreateAccountState extends State<CreateAccount> {
             .doc(user!.uid)
             .set(body)
             .onError((e, _) => print("Error writing document: $e"));
-        await Future.delayed(Duration(milliseconds: 100));
+
         showDialog(
           context: context,
           builder: (context) {

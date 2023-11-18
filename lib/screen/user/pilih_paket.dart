@@ -1,4 +1,5 @@
 import 'package:CleanCare/service/laundry_service.dart';
+import 'package:CleanCare/service/notifikasi_service.dart';
 import 'package:CleanCare/service/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +12,7 @@ class AddOrder extends StatefulWidget {
 class _AddOrderState extends State<AddOrder> {
   final LaundryService laundryService = LaundryService();
   final OrderService orderService = OrderService();
+  NotifikasiService notifikasiService = NotifikasiService();
   List<Map<String, dynamic>> item = [];
   int total = 0;
 
@@ -190,6 +192,8 @@ class _AddOrderState extends State<AddOrder> {
 
     // Call the OrderService to add the order to Firestore
     var orderId = await orderService.addOrder(orderData);
+
+    notifikasiService.sendOrderNotification(user?.email ?? "");
 
     // Show a success dialog with the order ID
     showDialog(

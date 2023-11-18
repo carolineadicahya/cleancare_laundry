@@ -18,7 +18,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.android,
   );
-  // await NotifikasiService().initNotifikasi();
+
+  NotifikasiService notifikasiService = NotifikasiService();
+  await NotifikasiService().initNotifikasi();
   runApp(const MyApp());
 }
 

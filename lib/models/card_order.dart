@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 enum OrderStatus { DITERIMA, DALAM_PENGERJAAN, SELESAI, CANCEL }
 
@@ -32,7 +33,8 @@ class OrderCard extends StatelessWidget {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Diterima: ${orderDate.toString()}'),
+                Text(
+                    'Diterima: ${DateFormat('dd MMMM yyyy').format(orderDate)}'),
                 Text('Status: $_status',
                     style: TextStyle(color: getStatusColor(status))),
               ],
