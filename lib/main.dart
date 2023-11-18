@@ -1,12 +1,14 @@
 import 'package:CleanCare/screen/owner/dashboard_admin.dart';
 import 'package:CleanCare/screen/owner/layout_admin.dart';
+import 'package:CleanCare/screen/owner/order_user(admin).dart';
 import 'package:CleanCare/screen/user/dashboard_user.dart';
 import 'package:CleanCare/screen/user/history.dart';
 import 'package:CleanCare/screen/user/layout_user.dart';
-import 'package:CleanCare/service/notifikasi_service.dart';
+import 'package:CleanCare/screen/user/order_user.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:CleanCare/firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:CleanCare/screen/page_awal.dart';
@@ -14,13 +16,12 @@ import 'package:CleanCare/screen/login.dart';
 import 'package:CleanCare/utils/constants.dart';
 
 Future<void> main() async {
+  await dotenv.load(fileName: ".env");
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.android,
   );
-
-  NotifikasiService notifikasiService = NotifikasiService();
-  await NotifikasiService().initNotifikasi();
   runApp(const MyApp());
 }
 
@@ -81,6 +82,14 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
     case "/history-card":
       return MaterialPageRoute(builder: (BuildContext context) {
         return HistoryOrder();
+      });
+    case "/notif-order":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return OrderUser();
+      });
+    case "/notif-status":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return OrderPage();
       });
     default:
       return MaterialPageRoute(builder: (BuildContext context) {

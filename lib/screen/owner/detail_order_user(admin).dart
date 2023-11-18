@@ -72,7 +72,7 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                       }).toList() ??
                       [],
                   tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
-                  estimasiSelesai: tanggalOrder?.add(Duration(days: 7)),
+                  estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
                   orderService: orderService,
                   notifikasiService: notifikasiService,
                   onUpdateStatus: (status) {

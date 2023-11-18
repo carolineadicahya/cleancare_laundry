@@ -68,7 +68,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   }).toList() ??
                   [],
               tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
-              estimasiSelesai: tanggalOrder?.add(Duration(days: 7)),
+              estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
               orderService: orderService,
             );
           } else {

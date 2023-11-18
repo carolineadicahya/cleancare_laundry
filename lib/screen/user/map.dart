@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
+import 'package:flutter_dotenv/flutter_dotenv.dart' as Dotenv;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -34,6 +36,7 @@ class MapPageState extends State<MapPage> {
 
   void getCurrentLocation() async {
     try {
+      await dotenv.load();
       final currentLocation = await location.getLocation();
       const LatLng destination = LatLng(-1.2560436592076922, 116.8360665);
 
@@ -85,8 +88,10 @@ class MapPageState extends State<MapPage> {
   }
 
   void _setPolylines(LatLng origin, LatLng destination) async {
+    String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "";
+
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      'AIzaSyAeqrAND55gTmvw_-rU_kWW6TigGwy__vE',
+      apiKey,
       PointLatLng(origin.latitude, origin.longitude),
       PointLatLng(destination.latitude, destination.longitude),
     );

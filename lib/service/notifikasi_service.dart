@@ -1,5 +1,11 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:convert';
+// import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotifikasiService {
   final _firebaseMessaging = FirebaseMessaging.instance;
@@ -7,13 +13,16 @@ class NotifikasiService {
       FlutterLocalNotificationsPlugin();
 
   // Di dalam metode initNotifikasi
-  Future<void> initNotifikasi() async {
+  Future<void> initNotifikasi(String uid) async {
     try {
       // Meminta izin notifikasi dari pengguna
       await _firebaseMessaging.requestPermission();
 
       // Mendapatkan FCM Token
       String? fCMToken = await _firebaseMessaging.getToken();
+      FirebaseFirestore.instance.collection('user').doc(uid).update({
+        'fcmToken': fCMToken,
+      });
 
       // Mencetak token
       print('Token: $fCMToken');
@@ -23,6 +32,9 @@ class NotifikasiService {
         // Callback ini akan dipanggil saat token FCM diperbarui
         print('Token refreshed: $newToken');
         // Anda dapat menangani perbaruan token sesuai kebutuhan aplikasi Anda
+        FirebaseFirestore.instance.collection('user').doc(uid).update({
+          'fcmToken': fCMToken,
+        });
       });
 
       if (fCMToken != null) {
@@ -55,12 +67,24 @@ class NotifikasiService {
     // Jika aplikasi sedang berjalan (foreground), handle notifikasi di sini
     print('Foreground Notification: ${message.notification?.body}');
 
-    // Menghapus notifikasi setelah membuka aplikasi
-    flutterLocalNotificationsPlugin.cancelAll();
+    // Show the notification in the system tray
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'clean_care_channel_id', // Replace with your channel ID
+      'CleanCare Channel', // Replace with your channel name
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    // Jika aplikasi sedang latar belakang, Anda bisa menavigasi ke layar notifikasi
-    // Pastikan Anda memiliki setup Navigator yang benar
-    // Navigator.pushNamed('/notification_screen', arguments: message);
+    flutterLocalNotificationsPlugin.show(
+      0,
+      message.notification?.title,
+      message.notification?.body,
+      platformChannelSpecifics,
+    );
   }
 
   Future<void> initPushNotifications() async {
@@ -89,44 +113,40 @@ class NotifikasiService {
     String body,
     String userFCMToken,
   ) async {
-    // Menyesuaikan pesan notifikasi
-    String notificationMessage = body;
-
-    // Mengirim notifikasi ke perangkat pengguna dengan FCM Token
-    await _firebaseMessaging.subscribeToTopic(userFCMToken);
-
-    // Konfigurasi notifikasi lokal
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'clean_care_channel_id', // Ganti dengan ID channel yang sesuai
-      'CleanCare Channel',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: false,
+    await dotenv.load();
+    await http.post(
+      Uri.parse("https://fcm.googleapis.com/fcm/send"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'key=${dotenv.env['FCM_API_KEY']}',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'to': userFCMToken,
+        'notification': {'title': title, 'body': body},
+      }),
     );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    // Tampilkan notifikasi lokal
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      title,
-      notificationMessage,
-      platformChannelSpecifics,
-    );
-
-    print('Notification sent: $notificationMessage');
   }
 
   Future<String?> getUserFCMTokenByEmail(String userEmail) async {
-    // Replace this with your logic to get the FCM token based on the user's email
-    // For now, using a placeholder method from Config class
-    return Config.getUserFCMToken();
+    // Query the Firestore database where the email field matches the userEmail
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('email', isEqualTo: userEmail)
+        .get();
+
+    // Check if the query returns any documents
+    if (querySnapshot.docs.isNotEmpty) {
+      // If yes, return the FCM token of the first document
+      return querySnapshot.docs.first.data()['fcmToken'];
+    } else {
+      // If no documents are found, return null
+      return null;
+    }
   }
 
   Future<void> sendOrderNotification(String userEmail) async {
     // Mendapatkan FCM Token admin
-    final adminFCMToken = await Config.getAdminFCMToken();
+    final adminFCMToken = await getUserFCMTokenByEmail("almaditha22@gmail.com");
 
     // Memastikan FCM Token admin ditemukan
     if (adminFCMToken != null) {
@@ -136,6 +156,9 @@ class NotifikasiService {
 
       // Mengirim notifikasi ke perangkat admin
       await sendNotification(title, body, adminFCMToken);
+
+      // Navigasi ke halaman notifikasi order
+      // navigateToRoute = '/notif-order';
     }
   }
 
@@ -151,6 +174,8 @@ class NotifikasiService {
 
       // Mengirim notifikasi ke perangkat pengguna
       await sendNotification(title, body, userFCMToken);
+
+      // navigateToRoute = '/notif-status';
     }
   }
 }

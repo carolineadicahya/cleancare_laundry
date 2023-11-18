@@ -2,7 +2,6 @@ import 'package:CleanCare/screen/owner/layout_admin.dart';
 import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -10,6 +9,7 @@ import '../controller/auth.dart';
 import '../utils/constants.dart';
 import '../widgets/app_button.dart';
 import '../widgets/input_widget.dart';
+import 'package:CleanCare/service/notifikasi_service.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key});
@@ -57,6 +57,9 @@ class _LoginState extends State<Login> {
         // Panggil checkRole untuk memeriksa peran pengguna setelah login
         // user.sendEmailVerification();
         checkRole(context);
+
+        NotifikasiService notifikasiService = NotifikasiService();
+        await NotifikasiService().initNotifikasi(user.uid);
       } else {
         showErrorDialog(
             'Email belum diverifikasi. Silakan periksa email Anda.');

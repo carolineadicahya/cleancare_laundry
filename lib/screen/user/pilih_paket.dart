@@ -192,7 +192,6 @@ class _AddOrderState extends State<AddOrder> {
 
     // Call the OrderService to add the order to Firestore
     var orderId = await orderService.addOrder(orderData);
-
     notifikasiService.sendOrderNotification(user?.email ?? "");
 
     // Show a success dialog with the order ID
