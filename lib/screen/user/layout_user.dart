@@ -2,7 +2,6 @@ import 'package:CleanCare/screen/user/pilih_paket.dart';
 import 'package:CleanCare/screen/user/dashboard_user.dart';
 import 'package:CleanCare/screen/user/order_user.dart';
 import 'package:CleanCare/screen/user/map.dart';
-// import 'package:CleanCare/screen/user/pilih_paket2.dart';
 import 'package:CleanCare/screen/user/profil_setting.dart';
 import 'package:CleanCare/utils/constants.dart';
 import 'package:flutter/material.dart';

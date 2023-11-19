@@ -1,3 +1,4 @@
+import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -80,6 +81,20 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: const Text('Profil Saya'),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LayoutPages(),
+              ),
+            );
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),

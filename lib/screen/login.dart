@@ -83,20 +83,18 @@ class _LoginState extends State<Login> {
     await db.collection("user").doc(user?.uid).get().then((value) {
       Map<String, dynamic> res = value.data() as dynamic;
 
-      if (res != null) {
-        if (res['role'] == 'admin') {
-          Navigator.pushReplacement(
+      if (res['role'] == 'admin') {
+        Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const LayoutAdmin()),
-          );
-        }
-        //redirect halaman owner
-        else {
-          Navigator.pushReplacement(
+            MaterialPageRoute(builder: (context) => LayoutAdmin()),
+            (route) => false);
+      }
+      //redirect halaman user
+      else {
+        Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const LayoutPages()),
-          );
-        }
+            MaterialPageRoute(builder: (context) => LayoutPages()),
+            (route) => false);
       }
     });
   }

@@ -49,6 +49,7 @@ class _CreateAccountState extends State<CreateAccount> {
             .set(body)
             .onError((e, _) => print("Error writing document: $e"));
 
+        // Show a dialog after email verification is sent
         showDialog(
           context: context,
           builder: (context) {

@@ -16,7 +16,6 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   String fullName = "Pelanggan"; // Inisialisasi nama default
-  String _profileImageUrl = "assets/images/user.png"; // Gambar profil default
 
   @override
   void initState() {
@@ -53,15 +52,9 @@ class _DashboardState extends State<Dashboard> {
           .get();
       if (userData.exists) {
         final userName = userData['name'];
-        final profileImageUrl =
-            userData['profileImageURL']; // URL gambar profil
 
         setState(() {
           fullName = userName ?? "Pelanggan";
-          if (profileImageUrl != null) {
-            _profileImageUrl =
-                profileImageUrl; // Gunakan URL gambar profil jika tersedia
-          }
         });
       }
     }
@@ -105,15 +98,6 @@ class _DashboardState extends State<Dashboard> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                              ),
-                            ),
-                            GestureDetector(
                               onTap: () async {
                                 await FirebaseAuth.instance.signOut();
                                 showDialog(
@@ -149,7 +133,7 @@ class _DashboardState extends State<Dashboard> {
                                 );
                               },
                               child: const Icon(
-                                IconData(0xf88b, fontFamily: 'MaterialIcons'),
+                                Icons.exit_to_app,
                                 color: Colors.white,
                                 size: 24.0,
                               ),

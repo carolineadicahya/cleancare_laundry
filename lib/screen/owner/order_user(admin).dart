@@ -1,5 +1,6 @@
 import 'package:CleanCare/models/card_order.dart';
 import 'package:CleanCare/screen/owner/detail_order_user(admin).dart';
+import 'package:CleanCare/screen/owner/layout_admin.dart';
 import 'package:CleanCare/service/notifikasi_service.dart';
 import 'package:CleanCare/service/order_service.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,20 @@ class _OrderUserState extends State<OrderUser> {
       appBar: AppBar(
         title: const Text('Order User'),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LayoutAdmin(),
+              ),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -38,8 +53,6 @@ class _OrderUserState extends State<OrderUser> {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final history = items[index].data() as Map<String, dynamic>;
-                  final isCancelled = history['status'] == 'Cancel';
-                  final textColor = isCancelled ? Colors.red : Colors.green;
 
                   return OrderCard(
                     email: history['email'] ?? '',
@@ -59,15 +72,13 @@ class _OrderUserState extends State<OrderUser> {
                     status: getOrderStatus(history['status'] ?? ''),
                     onDetail: () {
                       final String id = items[index].id;
-                      if (id != null) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AdminOrderDetailPage(
-                              id: id,
-                            ),
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AdminOrderDetailPage(
+                            id: id,
                           ),
-                        );
-                      }
+                        ),
+                      );
                     },
                   );
                 },
@@ -85,9 +96,9 @@ class _OrderUserState extends State<OrderUser> {
         return OrderStatus.DITERIMA;
       case 'Dalam Pengerjaan':
         return OrderStatus.DALAM_PENGERJAAN;
-      case 'Pesanan Selesai':
+      case 'Selesai':
         return OrderStatus.SELESAI;
-      case 'Cancel':
+      case 'di Cancel':
         return OrderStatus.CANCEL;
       default:
         return OrderStatus

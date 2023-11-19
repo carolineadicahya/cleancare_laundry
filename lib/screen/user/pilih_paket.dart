@@ -1,3 +1,4 @@
+import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:CleanCare/service/laundry_service.dart';
 import 'package:CleanCare/service/notifikasi_service.dart';
 import 'package:CleanCare/service/order_service.dart';
@@ -41,6 +42,20 @@ class _AddOrderState extends State<AddOrder> {
       appBar: AppBar(
         title: Text('Paket Laundry'),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LayoutPages(),
+              ),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

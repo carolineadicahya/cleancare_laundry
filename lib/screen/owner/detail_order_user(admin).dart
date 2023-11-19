@@ -1,5 +1,5 @@
+import 'package:CleanCare/screen/owner/layout_admin.dart';
 import 'package:CleanCare/service/notifikasi_service.dart';
-import 'package:CleanCare/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/service/order_service.dart';
@@ -26,6 +26,20 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
       appBar: AppBar(
         title: Text('Order Detail'),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LayoutAdmin(),
+              ),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -74,7 +88,8 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                       }).toList() ??
                       [],
                   tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
-                  estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
+                  estimasiSelesai: tanggalOrder.add(Duration(days: 3)),
+                  statusOrder: (item?['status']),
                   orderService: orderService,
                   notifikasiService: notifikasiService,
                   onUpdateStatus: (status) {
@@ -108,6 +123,7 @@ class OrderDetailBody extends StatelessWidget {
     this.items,
     this.tanggalOrder,
     this.estimasiSelesai,
+    required this.statusOrder,
     required this.orderService,
     required this.onUpdateStatus,
     required this.notifikasiService,
@@ -118,6 +134,7 @@ class OrderDetailBody extends StatelessWidget {
   final List<Map<String, dynamic>>? items;
   final DateTime? tanggalOrder;
   final DateTime? estimasiSelesai;
+  final String statusOrder;
   final OrderService? orderService;
   final void Function(String) onUpdateStatus;
   final NotifikasiService? notifikasiService;
@@ -176,6 +193,11 @@ class OrderDetailBody extends StatelessWidget {
           Text(
             'Estimasi Selesai: ${DateFormat('dd MMMM yyyy').format(estimasiSelesai!)}',
             style: TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            'Status: $statusOrder',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
           ),
           SizedBox(height: 8.0),
           ElevatedButton(

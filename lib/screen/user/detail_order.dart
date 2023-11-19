@@ -49,6 +49,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   }).toList() ??
                   [],
               "tanggal_order": (item?['tanggal order'] as Timestamp).toDate(),
+              "status": (item?['status']),
             };
 
             return OrderDetailBody(
@@ -70,6 +71,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   [],
               tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
               estimasiSelesai: tanggalOrder?.add(Duration(days: 3)),
+              statusOrder: (item?['status']),
               orderService: orderService,
             );
           } else {
@@ -91,6 +93,7 @@ class OrderDetailBody extends StatelessWidget {
     this.items,
     this.tanggalOrder,
     this.estimasiSelesai,
+    required this.statusOrder,
     required this.orderService,
   });
 
@@ -99,6 +102,7 @@ class OrderDetailBody extends StatelessWidget {
   final List<Map<String, dynamic>>? items;
   final DateTime? tanggalOrder;
   final DateTime? estimasiSelesai;
+  final String statusOrder;
   final OrderService? orderService;
 
   @override
@@ -155,6 +159,11 @@ class OrderDetailBody extends StatelessWidget {
           Text(
             'Estimasi Selesai: ${DateFormat('dd MMMM yyyy').format(estimasiSelesai!)}',
             style: TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            'Status: $statusOrder',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
           ),
         ],
       ),

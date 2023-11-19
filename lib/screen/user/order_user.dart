@@ -1,5 +1,6 @@
 import 'package:CleanCare/models/card_order.dart';
 import 'package:CleanCare/screen/user/detail_order.dart';
+import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:CleanCare/service/order_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,20 @@ class _OrderPageState extends State<OrderPage> {
       appBar: AppBar(
         title: const Text('Order Laundry'),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LayoutPages(),
+              ),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -47,7 +62,6 @@ class _OrderPageState extends State<OrderPage> {
                 itemBuilder: (context, index) {
                   final history =
                       userOrders[index].data() as Map<String, dynamic>;
-                  final isCancelled = history['status'] == 'Cancel';
                   final status = getOrderStatus(history['status'] ?? '');
 
                   return Dismissible(
@@ -115,9 +129,9 @@ class _OrderPageState extends State<OrderPage> {
 
   Future<void> _openWhatsApp() async {
     // Replace the phone number with the desired number
-    String phoneNumber = "+6281549205176";
+    String number = "+6281549205176";
     // Create the WhatsApp URL
-    String url = "https://wa.me/$phoneNumber";
+    String url = "https://wa.me/$number";
     // Check if the WhatsApp app is installed and launch the URL
     if (await canLaunch(url)) {
       await launch(url);
@@ -132,9 +146,9 @@ class _OrderPageState extends State<OrderPage> {
         return OrderStatus.DITERIMA;
       case 'Dalam Pengerjaan':
         return OrderStatus.DALAM_PENGERJAAN;
-      case 'Pesanan Selesai':
+      case 'Selesai':
         return OrderStatus.SELESAI;
-      case 'Cancel':
+      case 'di Cancel':
         return OrderStatus.CANCEL;
       default:
         return OrderStatus.DITERIMA;

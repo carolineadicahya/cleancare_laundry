@@ -79,15 +79,6 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                              ),
-                            ),
-                            GestureDetector(
                               onTap: () async {
                                 await FirebaseAuth.instance.signOut();
                                 showDialog(
@@ -123,7 +114,7 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                                 );
                               },
                               child: const Icon(
-                                IconData(0xf88b, fontFamily: 'MaterialIcons'),
+                                Icons.exit_to_app,
                                 color: Colors.white,
                                 size: 24.0,
                               ),

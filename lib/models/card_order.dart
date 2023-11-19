@@ -1,3 +1,4 @@
+import 'package:CleanCare/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -66,7 +67,7 @@ class OrderCard extends StatelessWidget {
   Color getStatusColor(OrderStatus status) {
     switch (status) {
       case OrderStatus.DITERIMA:
-        return Colors.green;
+        return Constants.primaryColor;
       case OrderStatus.DALAM_PENGERJAAN:
         return Colors.orange;
       case OrderStatus.SELESAI:

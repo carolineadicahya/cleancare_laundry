@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
-import 'package:flutter_dotenv/flutter_dotenv.dart' as Dotenv;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -130,6 +130,24 @@ class MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Jarak ke Laundry'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LayoutPages(),
+              ),
+            );
+          },
+        ),
+      ),
       body: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: _kGooglePlex,
