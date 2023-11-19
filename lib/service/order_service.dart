@@ -31,7 +31,7 @@ class OrderService {
   }
 
   // DELETE: hapus order
-  Future<void> cancelOrder(String id) {
+  Future<void> deleteOrder(String id) {
     return db.doc(id).delete();
   }
 

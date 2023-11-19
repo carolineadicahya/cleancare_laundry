@@ -15,6 +15,7 @@ class OrderPage extends StatefulWidget {
 
 class _OrderPageState extends State<OrderPage> {
   OrderService orderService = OrderService();
+  List<String> dismissedItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -47,34 +48,55 @@ class _OrderPageState extends State<OrderPage> {
                   final history =
                       userOrders[index].data() as Map<String, dynamic>;
                   final isCancelled = history['status'] == 'Cancel';
-                  final textColor = isCancelled ? Colors.red : Colors.green;
+                  final status = getOrderStatus(history['status'] ?? '');
 
-                  return OrderCard(
-                    email: history['email'] ?? '',
-                    items: (history['items'] as List<dynamic>?)
-                            ?.map<Map<String, dynamic>>((item) {
-                          if (item is Map<String, dynamic>) {
-                            return item;
-                          } else {
-                            // Handle the case where 'items' is not a List<Map<String, dynamic>>
-                            return {};
-                          }
-                        }).toList() ??
-                        [],
-                    orderDate: (history['tanggal order'] as Timestamp).toDate(),
-                    status: getOrderStatus(history['status'] ?? ''),
-                    onDetail: () {
-                      final String id = userOrders[index].id;
-                      if (id != null) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => OrderDetailPage(
-                              id: id,
-                            ),
-                          ),
-                        );
-                      }
+                  return Dismissible(
+                    key: Key(userOrders[index].id),
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(right: 20.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                    ),
+                    confirmDismiss: (direction) async {
+                      // Allow dismissal only if the status is 'Cancel' or 'Selesai'
+                      return status == OrderStatus.CANCEL ||
+                          status == OrderStatus.SELESAI;
                     },
+                    onDismissed: (direction) {
+                      // Add the dismissed item key to the list
+                      dismissedItems.add(userOrders[index].id);
+                    },
+                    child: OrderCard(
+                      email: history['email'] ?? '',
+                      items: (history['items'] as List<dynamic>?)
+                              ?.map<Map<String, dynamic>>((item) {
+                            if (item is Map<String, dynamic>) {
+                              return item;
+                            } else {
+                              return {};
+                            }
+                          }).toList() ??
+                          [],
+                      orderDate:
+                          (history['tanggal order'] as Timestamp).toDate(),
+                      status: status,
+                      onDetail: () {
+                        final String id = userOrders[index].id;
+                        if (id != null) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => OrderDetailPage(
+                                id: id,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                   );
                 },
               );
