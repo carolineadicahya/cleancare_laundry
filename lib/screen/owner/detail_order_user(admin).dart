@@ -22,7 +22,7 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 135, 196, 255),
+      backgroundColor: Color.fromARGB(255, 41, 140, 173),
       appBar: AppBar(
         title: Text('Order Detail'),
         centerTitle: true,
