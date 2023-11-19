@@ -1,4 +1,5 @@
 import 'package:CleanCare/service/notifikasi_service.dart';
+import 'package:CleanCare/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CleanCare/service/order_service.dart';
@@ -21,6 +22,7 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 135, 196, 255),
       appBar: AppBar(
         title: Text('Order Detail'),
         centerTitle: true,
@@ -126,8 +128,14 @@ class OrderDetailBody extends StatelessWidget {
         .map<double>((item) => (item['total'] as num).toDouble())
         .fold(0, (a, b) => a + b);
 
-    return SingleChildScrollView(
+    return Container(
+      margin: EdgeInsets.all(16.0),
       padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

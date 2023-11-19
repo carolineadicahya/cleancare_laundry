@@ -19,6 +19,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 135, 196, 255),
       appBar: AppBar(
         title: Text('Order Detail'),
         centerTitle: true,
@@ -106,8 +107,14 @@ class OrderDetailBody extends StatelessWidget {
         .map<double>((item) => (item['total'] as num).toDouble())
         .fold(0, (a, b) => a + b);
 
-    return SingleChildScrollView(
+    return Container(
+      margin: EdgeInsets.all(16.0),
       padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
