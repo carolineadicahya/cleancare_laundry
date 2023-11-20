@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/constants.dart';
-import '../../widgets/latest_orders.dart';
+import 'latest_orders_user.dart';
 import '../../widgets/location_slider.dart';
 
 class Dashboard extends StatefulWidget {
@@ -205,7 +205,7 @@ class _DashboardState extends State<Dashboard> {
                             horizontal: 24.0,
                           ),
                           child: Text(
-                            "New Locations",
+                            "Lokasi Terbaru",
                             style: TextStyle(
                               color: Color.fromRGBO(19, 22, 33, 1),
                               fontSize: 18.0,
@@ -220,7 +220,7 @@ class _DashboardState extends State<Dashboard> {
                             child: LocationSlider(),
                           ),
                         ),
-                        LatestOrders(),
+                        LatestOrdersUser(),
                       ],
                     ),
                   )

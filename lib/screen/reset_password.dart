@@ -1,4 +1,5 @@
 import 'package:CleanCare/controller/auth.dart';
+import 'package:CleanCare/screen/page_awal.dart';
 import 'package:CleanCare/service/notifikasi_service.dart';
 import 'package:CleanCare/widgets/app_button.dart';
 import 'package:CleanCare/widgets/input_widget.dart';
@@ -31,6 +32,8 @@ class _ResetPageState extends State<ResetPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Home()));
               },
               child: const Text('OK'),
             ),
@@ -65,14 +68,7 @@ class _ResetPageState extends State<ResetPage> {
     try {
       await Auth().sendPasswordResetEmail(_controllerEmail.text);
 
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null && user.emailVerified) {
-        NotifikasiService notifikasiService = NotifikasiService();
-        await NotifikasiService().initNotifikasi(user.uid);
-        _showEmailSentDialog();
-      } else {
-        showErrorDialog('Email Tidak Valid. Silakan periksa email Anda.');
-      }
+      _showEmailSentDialog();
     } on FirebaseAuthException catch (e) {
       context.loaderOverlay.hide();
       if (e.code == 'user-not-found') {

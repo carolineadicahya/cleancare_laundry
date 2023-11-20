@@ -57,8 +57,6 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
     case "/":
       return MaterialPageRoute(builder: (BuildContext context) {
         return const Home();
-        // return const LayoutAdmin();
-        // return const LayoutPages();
       });
     case "/login":
       return MaterialPageRoute(builder: (BuildContext context) {

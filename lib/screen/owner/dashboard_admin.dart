@@ -1,10 +1,10 @@
 import 'package:CleanCare/screen/login.dart';
+import 'package:CleanCare/screen/owner/latest_orders_admin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/constants.dart';
-import '../../widgets/latest_orders.dart';
 import '../../widgets/location_slider.dart';
 
 class DashboardAdmin extends StatefulWidget {
@@ -200,7 +200,7 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                             child: LocationSlider(),
                           ),
                         ),
-                        LatestOrders(),
+                        LatestOrdersAdmin(),
                       ],
                     ),
                   )

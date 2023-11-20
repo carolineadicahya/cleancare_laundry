@@ -61,24 +61,16 @@ class _CreateAccountState extends State<CreateAccount> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Home()),
+                    );
                   },
                   child: const Text('OK'),
                 ),
               ],
             );
           },
-        );
-      }
-
-      if (user != null && user.emailVerified) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LayoutPages()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Home()),
         );
       }
     } on FirebaseAuthException catch (e) {
