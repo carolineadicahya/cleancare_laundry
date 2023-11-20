@@ -2,14 +2,15 @@ import 'dart:math';
 
 import 'package:CleanCare/screen/user/detail_order.dart';
 import 'package:CleanCare/service/order_service.dart';
+import 'package:CleanCare/widgets/order.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../widgets/order.dart';
+import '../../widgets/order.dart' as order_widget;
 
 class LatestOrdersUser extends StatelessWidget {
-  OrderService orderService = OrderService();
+  final orderService = OrderService();
   LatestOrdersUser({Key? key}) : super(key: key);
 
   @override
@@ -65,8 +66,10 @@ class LatestOrdersUser extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final history =
                       userOrders[index].data() as Map<String, dynamic>;
+                  final status = getOrderStatusText(history['status'] ?? '');
+
                   // Let's pass the order details to the OrderCard widget
-                  return Order(
+                  return order_widget.Order(
                     email: history['email'] ?? '',
                     items: (history['items'] as List<dynamic>?)
                             ?.map<Map<String, dynamic>>((item) {
@@ -78,17 +81,16 @@ class LatestOrdersUser extends StatelessWidget {
                         }).toList() ??
                         [],
                     orderDate: (history['tanggal order'] as Timestamp).toDate(),
+                    status: status,
                     onDetail: () {
                       final String id = userOrders[index].id;
-                      if (id != null) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => OrderDetailPage(
-                              id: id,
-                            ),
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => OrderDetailPage(
+                            id: id,
                           ),
-                        );
-                      }
+                        ),
+                      );
                     },
                   );
                 },
@@ -103,5 +105,20 @@ class LatestOrdersUser extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  OrderStatus getOrderStatusText(String status) {
+    switch (status) {
+      case 'Pesanan Diterima':
+        return OrderStatus.DITERIMA;
+      case 'Dalam Pengerjaan':
+        return OrderStatus.DALAM_PENGERJAAN;
+      case 'Selesai':
+        return OrderStatus.SELESAI;
+      case 'di Cancel':
+        return OrderStatus.CANCEL;
+      default:
+        return OrderStatus.DITERIMA;
+    }
   }
 }

@@ -2,13 +2,14 @@ import 'dart:math';
 
 import 'package:CleanCare/screen/owner/detail_order_user(admin).dart';
 import 'package:CleanCare/service/order_service.dart';
+import 'package:CleanCare/widgets/order.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../widgets/order.dart';
+import '../../widgets/order.dart' as order_widget;
 
 class LatestOrdersAdmin extends StatelessWidget {
-  OrderService orderService = OrderService();
+  final OrderService orderService = OrderService();
   LatestOrdersAdmin({Key? key}) : super(key: key);
 
   @override
@@ -56,11 +57,14 @@ class LatestOrdersAdmin extends StatelessWidget {
                   vertical: 10.0,
                 ),
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: min(2, items.length),
+                itemCount: min(3, items.length),
                 itemBuilder: (context, index) {
                   final history = items[index].data() as Map<String, dynamic>;
                   // Let's pass the order details to the OrderCard widget
-                  return Order(
+                  final status = getOrderStatusText(history['status'] ?? '');
+
+                  // Let's pass the order details to the OrderCard widget
+                  return order_widget.Order(
                     email: history['email'] ?? '',
                     items: (history['items'] as List<dynamic>?)
                             ?.map<Map<String, dynamic>>((item) {
@@ -72,17 +76,16 @@ class LatestOrdersAdmin extends StatelessWidget {
                         }).toList() ??
                         [],
                     orderDate: (history['tanggal order'] as Timestamp).toDate(),
+                    status: status,
                     onDetail: () {
                       final String id = items[index].id;
-                      if (id != null) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AdminOrderDetailPage(
-                              id: id,
-                            ),
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AdminOrderDetailPage(
+                            id: id,
                           ),
-                        );
-                      }
+                        ),
+                      );
                     },
                   );
                 },
@@ -97,5 +100,20 @@ class LatestOrdersAdmin extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  OrderStatus getOrderStatusText(String status) {
+    switch (status) {
+      case 'Pesanan Diterima':
+        return OrderStatus.DITERIMA;
+      case 'Dalam Pengerjaan':
+        return OrderStatus.DALAM_PENGERJAAN;
+      case 'Selesai':
+        return OrderStatus.SELESAI;
+      case 'di Cancel':
+        return OrderStatus.CANCEL;
+      default:
+        return OrderStatus.DITERIMA;
+    }
   }
 }

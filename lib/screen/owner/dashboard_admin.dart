@@ -149,11 +149,6 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                                 ],
                               ),
                             ),
-                            Image.asset(
-                              "assets/images/user.png",
-                              height: 80,
-                              width: 80,
-                            )
                           ],
                         )
                       ],
@@ -186,7 +181,7 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                             horizontal: 24.0,
                           ),
                           child: Text(
-                            "New Locations",
+                            "Lokasi Terkini",
                             style: TextStyle(
                               color: Color.fromRGBO(19, 22, 33, 1),
                               fontSize: 18.0,

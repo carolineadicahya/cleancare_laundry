@@ -47,7 +47,7 @@ class Order extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  getOrderStatusText(status),
+                  (email),
                   style: const TextStyle(
                     color: Color.fromRGBO(19, 22, 33, 1),
                     fontSize: 16.0,
@@ -56,7 +56,7 @@ class Order extends StatelessWidget {
                 const SizedBox(
                   height: 10.0,
                 ),
-                textRow("Tanggal Order", orderDate as String),
+                // textRow("Tanggal Order", orderDate as String),
                 const SizedBox(
                   height: 5.0,
                 ),
@@ -105,7 +105,7 @@ Widget getOrderIconWidget(OrderStatus status) {
           color: Color.fromRGBO(93, 186, 235, 0.173),
         ),
         child: const Icon(
-          Icons.local_activity,
+          Icons.send_rounded,
           color: Constants.primaryColor,
         ),
       );
@@ -118,7 +118,7 @@ Widget getOrderIconWidget(OrderStatus status) {
           color: Color.fromRGBO(238, 173, 133, 0.149),
         ),
         child: const Icon(
-          Icons.history,
+          Icons.local_laundry_service_outlined,
           color: Color.fromRGBO(255, 99, 2, 1),
         ),
       );
@@ -131,7 +131,7 @@ Widget getOrderIconWidget(OrderStatus status) {
           color: Color.fromRGBO(126, 240, 126, 0.145),
         ),
         child: const Icon(
-          Icons.history,
+          Icons.done_all_rounded,
           color: Color.fromRGBO(50, 144, 12, 1),
         ),
       );
@@ -144,7 +144,7 @@ Widget getOrderIconWidget(OrderStatus status) {
           color: Color.fromRGBO(245, 132, 103, 0.141),
         ),
         child: const Icon(
-          Icons.history,
+          Icons.cancel_outlined,
           color: Color.fromRGBO(255, 10, 2, 1),
         ),
       );

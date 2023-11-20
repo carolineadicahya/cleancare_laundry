@@ -205,7 +205,7 @@ class _DashboardState extends State<Dashboard> {
                             horizontal: 24.0,
                           ),
                           child: Text(
-                            "Lokasi Terbaru",
+                            "Lokasi Terkini",
                             style: TextStyle(
                               color: Color.fromRGBO(19, 22, 33, 1),
                               fontSize: 18.0,
