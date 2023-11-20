@@ -1,6 +1,7 @@
 import 'package:CleanCare/screen/owner/dashboard_admin.dart';
 import 'package:CleanCare/screen/owner/layout_admin.dart';
 import 'package:CleanCare/screen/owner/order_user(admin).dart';
+import 'package:CleanCare/screen/reset_password.dart';
 import 'package:CleanCare/screen/user/dashboard_user.dart';
 import 'package:CleanCare/screen/user/history.dart';
 import 'package:CleanCare/screen/user/layout_user.dart';
@@ -62,6 +63,10 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
     case "/login":
       return MaterialPageRoute(builder: (BuildContext context) {
         return const Login();
+      });
+    case "/reset":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return const ResetPage();
       });
     case "/user":
       return MaterialPageRoute(builder: (BuildContext context) {

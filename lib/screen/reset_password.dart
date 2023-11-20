@@ -1,27 +1,44 @@
-import 'package:CleanCare/screen/owner/layout_admin.dart';
-import 'package:CleanCare/screen/reset_password.dart';
-import 'package:CleanCare/screen/user/layout_user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-// import '../controller/auth.dart';
-import '../utils/constants.dart';
-import '../widgets/app_button.dart';
-import '../widgets/input_widget.dart';
+import 'package:CleanCare/controller/auth.dart';
 import 'package:CleanCare/service/notifikasi_service.dart';
+import 'package:CleanCare/widgets/app_button.dart';
+import 'package:CleanCare/widgets/input_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import '../utils/constants.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key});
+class ResetPage extends StatefulWidget {
+  const ResetPage({Key? key});
 
   @override
-  _LoginState createState() => _LoginState();
+  _ResetPageState createState() => _ResetPageState();
 }
 
-class _LoginState extends State<Login> {
+class _ResetPageState extends State<ResetPage> {
   final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
+
+  void _showEmailSentDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Email Terkirim'),
+          content: const Text(
+            'Email reset password telah terkirim. Silakan cek email Anda untuk petunjuk selanjutnya.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void showErrorDialog(String errorMessage) {
     showDialog(
@@ -43,61 +60,27 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void signIn() async {
+  void resetPassword() async {
     context.loaderOverlay.show();
     try {
-      // ignore: unused_local_variable
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _controllerEmail.text,
-        password: _controllerPassword.text,
-      );
+      await Auth().sendPasswordResetEmail(_controllerEmail.text);
 
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null && user.emailVerified) {
-        // Panggil checkRole untuk memeriksa peran pengguna setelah login
-        // user.sendEmailVerification();
-        checkRole(context);
-
         NotifikasiService notifikasiService = NotifikasiService();
         await NotifikasiService().initNotifikasi(user.uid);
+        _showEmailSentDialog();
       } else {
-        showErrorDialog(
-            'Email belum diverifikasi. Silakan periksa email Anda.');
+        showErrorDialog('Email Tidak Valid. Silakan periksa email Anda.');
       }
     } on FirebaseAuthException catch (e) {
       context.loaderOverlay.hide();
-      if (e.code == 'wrong-password') {
-        showErrorDialog('Password yang Anda masukkan salah.');
-      } else if (e.code == 'user-not-found') {
+      if (e.code == 'user-not-found') {
         showErrorDialog('Akun dengan email tersebut tidak ditemukan.');
       } else {
         showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
       }
     }
-  }
-
-  void checkRole(BuildContext context) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    final db = FirebaseFirestore.instance;
-    // print(user?.uid);
-    await db.collection("user").doc(user?.uid).get().then((value) {
-      Map<String, dynamic> res = value.data() as dynamic;
-
-      if (res['role'] == 'admin') {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => LayoutAdmin()),
-            (route) => false);
-      }
-      //redirect halaman user
-      else {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => LayoutPages()),
-            (route) => false);
-      }
-    });
   }
 
   @override
@@ -156,7 +139,7 @@ class _LoginState extends State<Login> {
                                 height: 20.0,
                               ),
                               Text(
-                                "Masuk",
+                                "Reset Password",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
@@ -196,38 +179,12 @@ class _LoginState extends State<Login> {
                                   hintText: "Masukkan Email Anda",
                                 ),
                                 const SizedBox(
-                                  height: 25.0,
-                                ),
-                                InputWidget(
-                                  topLabel: "Password",
-                                  controller: _controllerPassword,
-                                  obscureText: true,
-                                  hintText: "Masukkan Password Anda",
-                                ),
-                                const SizedBox(
                                   height: 15.0,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, '/reset');
-                                  },
-                                  child: Text(
-                                    "Lupa Password?",
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Constants.primaryColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 20.0,
                                 ),
                                 AppButton(
                                   type: ButtonType.PRIMARY,
-                                  text: "Masuk",
-                                  onPressed: signIn,
+                                  text: "Reset Password",
+                                  onPressed: resetPassword,
                                 )
                               ],
                             ),
