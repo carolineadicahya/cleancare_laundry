@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
+import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -120,10 +120,10 @@ class MapPageState extends State<MapPage> {
       'destination': '${destination.latitude},${destination.longitude}',
     });
     final url = uri.toString();
-    if (await UrlLauncher.canLaunch(url)) {
-      await UrlLauncher.launch(url);
-    } else {
-      throw 'Could not launch $url';
+    try {
+      await launchUrl(Uri.parse(url));
+    } catch (e) {
+      print("cannot launch $url: $e");
     }
   }
 

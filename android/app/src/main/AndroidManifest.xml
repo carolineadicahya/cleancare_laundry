@@ -33,4 +33,11 @@
             android:value="2" />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <queries> 
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.kategory.BROWSABLE"/>
+        </intent>
+        <package android:name="com.whatsapp"/>
+    </queries>
 </manifest>

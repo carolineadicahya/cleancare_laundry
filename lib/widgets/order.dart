@@ -25,46 +25,51 @@ class Order extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: ScreenUtil().setHeight(121.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: const Color.fromRGBO(220, 233, 245, 1),
+    return GestureDetector(
+      onTap: () {
+        onDetail();
+      },
+      child: Container(
+        height: ScreenUtil().setHeight(121.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: const Color.fromRGBO(220, 233, 245, 1),
+          ),
         ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getOrderIconWidget(status),
-          const SizedBox(
-            width: 25.0,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (email),
-                  style: const TextStyle(
-                    color: Color.fromRGBO(19, 22, 33, 1),
-                    fontSize: 16.0,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                // textRow("Tanggal Order", orderDate as String),
-                const SizedBox(
-                  height: 5.0,
-                ),
-                textRow("Status", getOrderStatusText(status)),
-              ],
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getOrderIconWidget(status),
+            const SizedBox(
+              width: 25.0,
             ),
-          ),
-        ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (email),
+                    style: const TextStyle(
+                      color: Color.fromRGBO(19, 22, 33, 1),
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  // textRow("Tanggal Order", orderDate as String),
+                  const SizedBox(
+                    height: 5.0,
+                  ),
+                  textRow("Status", getOrderStatusText(status)),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

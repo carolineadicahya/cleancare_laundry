@@ -133,10 +133,10 @@ class _OrderPageState extends State<OrderPage> {
     // Create the WhatsApp URL
     String url = "https://wa.me/$number";
     // Check if the WhatsApp app is installed and launch the URL
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+    try {
+      await launchUrl(Uri.parse(url));
+    } catch (e) {
+      print("cannot launch $url: $e");
     }
   }
 
