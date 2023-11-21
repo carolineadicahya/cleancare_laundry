@@ -39,6 +39,18 @@ class Auth {
     }
   }
 
+  Future<void> updateEmail(User? user, String newEmail) async {
+    try {
+      await user?.updateEmail(newEmail);
+      await _firestore
+          .collection('user')
+          .doc(user?.uid)
+          .update({'email': newEmail});
+    } on FirebaseAuthException {
+      rethrow;
+    }
+  }
+
   Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,

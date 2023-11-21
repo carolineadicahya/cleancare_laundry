@@ -4,7 +4,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io'; // Tambahkan ini untuk mengimpor 'File' yang diperlukan
+import 'dart:io';
+
+import 'package:loader_overlay/loader_overlay.dart'; // Tambahkan ini untuk mengimpor 'File' yang diperlukan
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}); // Perbaiki 'super.key' menjadi 'Key? key'
@@ -31,7 +33,18 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     user = _auth.currentUser;
+    _loadEmailUser();
     _loadUserProfile();
+  }
+
+  Future<void> _loadEmailUser() async {
+    user = _auth.currentUser;
+    final userEmail = await _firestore.collection('user').doc(user!.uid).get();
+    if (userEmail.exists) {
+      setState(() {
+        emailController.text = userEmail['email'] ?? '';
+      });
+    }
   }
 
   Future<void> _loadUserProfile() async {
@@ -44,7 +57,6 @@ class _ProfilePageState extends State<ProfilePage> {
         nameController.text = profileData['name'] ?? '';
         addressController.text = profileData['address'] ?? '';
         phoneNumberController.text = profileData['phoneNumber'] ?? '';
-        emailController.text = profileData['email'] ?? '';
       });
     }
   }
@@ -59,6 +71,26 @@ class _ProfilePageState extends State<ProfilePage> {
         _selectedImage = file;
       });
     }
+  }
+
+  void showErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Kesalahan'),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -112,19 +144,35 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: GestureDetector(
-                onTap: () {
-                  _pickImage();
-                },
-                child: _selectedImage != null
-                    ? CircleAvatar(
-                        radius: 60.0,
-                        backgroundImage: FileImage(_selectedImage!),
-                      )
-                    : CircleAvatar(
-                        radius: 60.0,
-                        backgroundImage: AssetImage("assets/images/user.png"),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  GestureDetector(
+                    child: _selectedImage != null
+                        ? CircleAvatar(
+                            radius: 60.0,
+                            backgroundImage: FileImage(_selectedImage!),
+                          )
+                        : CircleAvatar(
+                            radius: 60.0,
+                            backgroundImage:
+                                AssetImage("assets/images/user.png"),
+                          ),
+                  ),
+                  Positioned(
+                    bottom: -10,
+                    left: 80,
+                    child: IconButton(
+                      onPressed: () {
+                        _pickImage();
+                      },
+                      icon: Icon(
+                        Icons.add_a_photo_rounded,
+                        color: const Color.fromARGB(255, 93, 90, 90),
                       ),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 24.0),
@@ -231,31 +279,66 @@ class _ProfilePageState extends State<ProfilePage> {
           'name': nameController.text,
           'address': addressController.text,
           'phoneNumber': phoneNumberController.text,
-          'email': emailController.text,
+          // 'email': emailController.text,
           'profileImageURL': imageURL,
         }, SetOptions(merge: true));
-      } else {
-        await userDocRef.set({
-          'name': nameController.text,
-          'address': addressController.text,
-          'phoneNumber': phoneNumberController.text,
-          'email': emailController.text,
-        }, SetOptions(merge: true));
       }
-
-      setState(() {
-        isEditing = false;
-        _loadUserProfile(); // Memuat ulang data profil
-      });
+      _saveNewEmail();
     }
+
+    setState(() {
+      isEditing = false;
+      _loadUserProfile();
+      _loadEmailUser();
+    });
   }
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    addressController.dispose();
-    phoneNumberController.dispose();
-    emailController.dispose();
-    super.dispose();
+  Future<void> _saveNewEmail() async {
+    final user = _auth.currentUser;
+    await user?.sendEmailVerification();
+    if (user != null) {
+      try {
+        await user.updateEmail(emailController.text);
+        await _firestore
+            .collection('user')
+            .doc(user.uid)
+            .update({'email': emailController.text});
+
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Email Verifikasi Terkirim'),
+              content: const Text(
+                  'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } on FirebaseAuthException catch (e) {
+        context.loaderOverlay.hide();
+        if (e.code == 'email-already-in-use') {
+          showErrorDialog('Akun Telah Terdaftar dengan Email Tersebut.');
+        } else {
+          showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
+        }
+      }
+    }
+
+    @override
+    void dispose() {
+      nameController.dispose();
+      addressController.dispose();
+      phoneNumberController.dispose();
+      emailController.dispose();
+      super.dispose();
+    }
   }
 }
