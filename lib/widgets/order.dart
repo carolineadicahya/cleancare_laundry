@@ -33,52 +33,45 @@ class Order extends StatelessWidget {
       onTap: () {
         onDetail();
       },
-      child: Container(
-        height: ScreenUtil().setHeight(121.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
+      child: Card(
+        elevation: 2.0,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: const Color.fromRGBO(220, 233, 245, 1),
-          ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getOrderIconWidget(status),
-            const SizedBox(
-              width: 25.0,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    (email),
-                    style: const TextStyle(
-                      color: Color.fromRGBO(19, 22, 33, 1),
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  textRow(
-                      "Tanggal Order: ${DateFormat('dd MMMM yyyy').format(orderDate)}"),
-                  const SizedBox(
-                    height: 5.0,
-                  ),
-                  textRow(
-                      "Estimasi Tanggal: ${DateFormat('dd MMMM yyyy').format(estimationDate)}"),
-                  const SizedBox(
-                    height: 5.0,
-                  ),
-                  textRow("Status $_status"),
-                ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getOrderIconWidget(status),
+              const SizedBox(
+                width: 25.0,
               ),
-            ),
-          ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      email,
+                      style: const TextStyle(
+                        color: Color.fromRGBO(19, 22, 33, 1),
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    textRow(
+                        "Estimasi Tanggal: ${formatter.format(estimationDate)}"),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    textRow("Status $_status"),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -89,7 +82,7 @@ Widget textRow(String textOne) {
   return Wrap(
     children: [
       Text(
-        "$textOne:",
+        textOne,
         style: const TextStyle(
           color: Color.fromRGBO(74, 77, 84, 0.7),
           fontSize: 14.0,

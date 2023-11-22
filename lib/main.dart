@@ -46,7 +46,6 @@ class MyApp extends StatelessWidget {
             textTheme: GoogleFonts.poppinsTextTheme(),
           ),
           initialRoute: "/",
-          routes: {'/': (context) => const Login()},
           onGenerateRoute: _onGenerateRoute,
         );
       },

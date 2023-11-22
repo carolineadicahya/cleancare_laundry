@@ -102,10 +102,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    if (user != null) {
-      checkRole(context);
-    }
-
     return Scaffold(
       backgroundColor: Constants.primaryColor,
       body: LoaderOverlay(

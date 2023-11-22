@@ -27,75 +27,68 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
         title: Text('Order Detail'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Expanded(
-          child: StreamBuilder<DocumentSnapshot>(
-            stream: orderService.getDetail(widget.id),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                DocumentSnapshot? item = snapshot.data;
-                DateTime? tanggalOrder =
-                    (item?['tanggal order'] as Timestamp).toDate();
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: orderService.getDetail(widget.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            DocumentSnapshot? item = snapshot.data;
+            DateTime? tanggalOrder =
+                (item?['tanggal order'] as Timestamp).toDate();
 
-                order = {
-                  "email": item?['email'] ?? '',
-                  "items": (item?['items'] as List<dynamic>?)
-                          ?.map<Map<String, dynamic>>((item) {
-                        if (item is Map<String, dynamic>) {
-                          return {
-                            "nama_paket": item['nama paket'],
-                            "quantity": item['quantity'],
-                            "total": item['total'],
-                          };
-                        } else {
-                          return {};
-                        }
-                      }).toList() ??
-                      [],
-                  "tanggal_order":
-                      (item?['tanggal order'] as Timestamp).toDate(),
-                };
+            order = {
+              "email": item?['email'] ?? '',
+              "items": (item?['items'] as List<dynamic>?)
+                      ?.map<Map<String, dynamic>>((item) {
+                    if (item is Map<String, dynamic>) {
+                      return {
+                        "nama_paket": item['nama paket'],
+                        "quantity": item['quantity'],
+                        "total": item['total'],
+                      };
+                    } else {
+                      return {};
+                    }
+                  }).toList() ??
+                  [],
+              "tanggal_order": (item?['tanggal order'] as Timestamp).toDate(),
+            };
 
-                return OrderDetailBody(
-                  id: item!.id,
-                  email: item!['email'],
-                  items: (item['items'] as List<dynamic>?)
-                          ?.map<Map<String, dynamic>>((item) {
-                        if (item is Map<String, dynamic>) {
-                          return {
-                            "nama_paket": item['nama paket'],
-                            "quantity": item['quantity'],
-                            "total": item['total'],
-                          };
-                        } else {
-                          return {};
-                        }
-                      }).toList() ??
-                      [],
-                  tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
-                  estimasiSelesai: tanggalOrder.add(Duration(days: 3)),
-                  statusOrder: (item?['status']),
-                  orderService: orderService,
-                  notifikasiService: notifikasiService,
-                  onUpdateStatus: (status) {
-                    orderService.updateOrderStatus(widget.id, status);
-                    // Update the status in the OrderCard by calling the callback
-                    setState(() {
-                      order['status'] = status;
-                    });
-                    notifikasiService.sendStatusNotification(
-                        order['email'], status);
-                  },
-                );
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
-          ),
-        ),
+            return OrderDetailBody(
+              id: item!.id,
+              email: item!['email'],
+              items: (item['items'] as List<dynamic>?)
+                      ?.map<Map<String, dynamic>>((item) {
+                    if (item is Map<String, dynamic>) {
+                      return {
+                        "nama_paket": item['nama paket'],
+                        "quantity": item['quantity'],
+                        "total": item['total'],
+                      };
+                    } else {
+                      return {};
+                    }
+                  }).toList() ??
+                  [],
+              tanggalOrder: (item?['tanggal order'] as Timestamp).toDate(),
+              estimasiSelesai: tanggalOrder.add(Duration(days: 3)),
+              orderService: orderService,
+              notifikasiService: notifikasiService,
+              onUpdateStatus: (status) {
+                orderService.updateOrderStatus(widget.id, status);
+                // Update the status in the OrderCard by calling the callback
+                setState(() {
+                  order['status'] = status;
+                });
+                notifikasiService.sendStatusNotification(
+                    order['email'], status);
+              },
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
   }
@@ -109,7 +102,6 @@ class OrderDetailBody extends StatelessWidget {
     this.items,
     this.tanggalOrder,
     this.estimasiSelesai,
-    required this.statusOrder,
     required this.orderService,
     required this.onUpdateStatus,
     required this.notifikasiService,
@@ -120,7 +112,7 @@ class OrderDetailBody extends StatelessWidget {
   final List<Map<String, dynamic>>? items;
   final DateTime? tanggalOrder;
   final DateTime? estimasiSelesai;
-  final String statusOrder;
+  // final String statusOrder;
   final OrderService? orderService;
   final void Function(String) onUpdateStatus;
   final NotifikasiService? notifikasiService;
@@ -181,11 +173,6 @@ class OrderDetailBody extends StatelessWidget {
             style: TextStyle(fontSize: 16.0),
           ),
           SizedBox(height: 16.0),
-          Text(
-            'Status: $statusOrder',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-          ),
-          SizedBox(height: 8.0),
           ElevatedButton(
             onPressed: () => onUpdateStatus('Dalam Pengerjaan'),
             child: Text('Dalam Pengerjaan'),

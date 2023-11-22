@@ -15,6 +15,7 @@ class ChangeEmail extends StatefulWidget {
 }
 
 class _ChangeEmailState extends State<ChangeEmail> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNewEmail = TextEditingController();
 
@@ -62,12 +63,26 @@ class _ChangeEmailState extends State<ChangeEmail> {
     );
   }
 
+  void updateUserEmail(String newEmail) async {
+    User? user = auth.currentUser;
+
+    if (user != null) {
+      try {
+        await user.verifyBeforeUpdateEmail(newEmail);
+        print('Email updated');
+        _showNewEmailSentDialog();
+      } catch (e) {
+        print('Failed to update email: $e');
+      }
+    } else {
+      print('No user is currently signed in.');
+    }
+  }
+
   void changeEmail() async {
     context.loaderOverlay.show();
     try {
-      // await Auth().updateEmail(_controllerNewEmail);
-
-      _showNewEmailSentDialog();
+      updateUserEmail(_controllerNewEmail.text);
     } on FirebaseAuthException catch (e) {
       context.loaderOverlay.hide();
       if (e.code == 'user-not-found') {

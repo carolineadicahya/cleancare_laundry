@@ -7,8 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-import 'package:loader_overlay/loader_overlay.dart'; // Tambahkan ini untuk mengimpor 'File' yang diperlukan
-
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}); // Perbaiki 'super.key' menjadi 'Key? key'
 
@@ -34,18 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     user = _auth.currentUser;
-    _loadEmailUser();
     _loadUserProfile();
-  }
-
-  Future<void> _loadEmailUser() async {
-    user = _auth.currentUser;
-    final userEmail = await _firestore.collection('user').doc(user!.uid).get();
-    if (userEmail.exists) {
-      setState(() {
-        emailController.text = userEmail['email'] ?? '';
-      });
-    }
   }
 
   Future<void> _loadUserProfile() async {
@@ -160,19 +147,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 AssetImage("assets/images/user.png"),
                           ),
                   ),
-                  Positioned(
-                    bottom: -10,
-                    left: 80,
-                    child: IconButton(
-                      onPressed: () {
-                        _pickImage();
-                      },
-                      icon: Icon(
-                        Icons.add_a_photo_rounded,
-                        color: const Color.fromARGB(255, 93, 90, 90),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -277,63 +251,26 @@ class _ProfilePageState extends State<ProfilePage> {
           'phoneNumber': phoneNumberController.text,
           'profileImageURL': imageURL,
         }, SetOptions(merge: true));
+      } else {
+        await userDocRef.set({
+          'name': nameController.text,
+          'address': addressController.text,
+          'phoneNumber': phoneNumberController.text,
+        }, SetOptions(merge: true));
       }
-      _saveNewEmail();
     }
 
     setState(() {
       isEditing = false;
       _loadUserProfile();
-      _loadEmailUser();
     });
   }
 
-  Future<void> _saveNewEmail() async {
-    final user = _auth.currentUser;
-    await user?.sendEmailVerification();
-    if (user != null) {
-      try {
-        await user.updateEmail(emailController.text);
-        await _firestore
-            .collection('user')
-            .doc(user.uid)
-            .update({'email': emailController.text});
-
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Email Verifikasi Terkirim'),
-              content: const Text(
-                  'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      } on FirebaseAuthException catch (e) {
-        context.loaderOverlay.hide();
-        if (e.code == 'email-already-in-use') {
-          showErrorDialog('Akun Telah Terdaftar dengan Email Tersebut.');
-        } else {
-          showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
-        }
-      }
-    }
-
-    @override
-    void dispose() {
-      nameController.dispose();
-      addressController.dispose();
-      phoneNumberController.dispose();
-      emailController.dispose();
-      super.dispose();
-    }
+  @override
+  void dispose() {
+    nameController.dispose();
+    addressController.dispose();
+    phoneNumberController.dispose();
+    super.dispose();
   }
 }
