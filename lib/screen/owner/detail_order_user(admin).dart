@@ -26,20 +26,6 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
       appBar: AppBar(
         title: Text('Order Detail'),
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LayoutAdmin(),
-              ),
-            );
-          },
-        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

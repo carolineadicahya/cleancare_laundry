@@ -61,6 +61,8 @@ class LatestOrdersAdmin extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final history = items[index].data() as Map<String, dynamic>;
                   // Let's pass the order details to the OrderCard widget
+                  final DateTime orderDate =
+                      (history['tanggal order'] as Timestamp).toDate();
                   final status = getOrderStatusText(history['status'] ?? '');
 
                   // Let's pass the order details to the OrderCard widget
@@ -75,7 +77,8 @@ class LatestOrdersAdmin extends StatelessWidget {
                           }
                         }).toList() ??
                         [],
-                    orderDate: (history['tanggal order'] as Timestamp).toDate(),
+                    orderDate: orderDate,
+                    estimationDate: orderDate.add(Duration(days: 3)),
                     status: status,
                     onDetail: () {
                       final String id = items[index].id;

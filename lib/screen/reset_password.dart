@@ -1,6 +1,5 @@
 import 'package:CleanCare/controller/auth.dart';
-import 'package:CleanCare/screen/page_awal.dart';
-import 'package:CleanCare/service/notifikasi_service.dart';
+import 'package:CleanCare/screen/login.dart';
 import 'package:CleanCare/widgets/app_button.dart';
 import 'package:CleanCare/widgets/input_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,7 +32,7 @@ class _ResetPageState extends State<ResetPage> {
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Home()));
+                    context, MaterialPageRoute(builder: (context) => Login()));
               },
               child: const Text('OK'),
             ),

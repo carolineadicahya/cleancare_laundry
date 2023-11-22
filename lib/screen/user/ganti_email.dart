@@ -1,87 +1,45 @@
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:CleanCare/screen/page_awal.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:CleanCare/utils/constants.dart';
+import 'package:CleanCare/screen/login.dart';
 import 'package:CleanCare/widgets/app_button.dart';
 import 'package:CleanCare/widgets/input_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import '../../utils/constants.dart';
 
-class CreateAccount extends StatefulWidget {
-  const CreateAccount({super.key});
+class ChangeEmail extends StatefulWidget {
+  const ChangeEmail({Key? key});
 
   @override
-  _CreateAccountState createState() => _CreateAccountState();
+  _ChangeEmailState createState() => _ChangeEmailState();
 }
 
-class _CreateAccountState extends State<CreateAccount> {
-  final FirebaseFirestore db = FirebaseFirestore.instance;
-  final TextEditingController _controllerFullName = TextEditingController();
+class _ChangeEmailState extends State<ChangeEmail> {
   final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _controllerNewEmail = TextEditingController();
 
-  Future<void> createUserWithEmailAndPassword() async {
-    final db = FirebaseFirestore.instance;
-
-    context.loaderOverlay.show();
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _controllerEmail.text.trim(),
-        password: _controllerPassword.text.trim(),
-      );
-
-      User? user = userCredential.user;
-
-      Map<String, dynamic> body = {
-        'name': _controllerFullName.text,
-        'email': _controllerEmail.text,
-        'role': 'user'
-      };
-
-      if (user != null) {
-        await user.sendEmailVerification();
-        await db
-            .collection('user')
-            .doc(user!.uid)
-            .set(body)
-            .onError((e, _) => print("Error writing document: $e"));
-
-        // Show a dialog after email verification is sent
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Email Verifikasi Terkirim'),
-              content: const Text(
-                  'Email Verifikasi Telah Terkirim. Mohon Verifikasi Email Anda Sebelum Log In.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Home()),
-                    );
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
+  void _showNewEmailSentDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Verifikasi '),
+          content: const Text(
+            'Silakan cek email baru Anda untuk verifikasi.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+              },
+              child: const Text('OK'),
+            ),
+          ],
         );
-      }
-    } on FirebaseAuthException catch (e) {
-      context.loaderOverlay.hide();
-      if (e.code == 'weak-password') {
-        showErrorDialog('Password Terlalu Lemah.');
-      } else if (e.code == 'email-already-in-use') {
-        showErrorDialog('Akun Telah Terdaftar dengan Email Tersebut.');
-      } else {
-        showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
-      }
-    }
+      },
+    );
   }
 
   void showErrorDialog(String errorMessage) {
@@ -89,7 +47,7 @@ class _CreateAccountState extends State<CreateAccount> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Kesalahan'),
+          title: const Text('Error'),
           content: Text(errorMessage),
           actions: <Widget>[
             TextButton(
@@ -102,6 +60,22 @@ class _CreateAccountState extends State<CreateAccount> {
         );
       },
     );
+  }
+
+  void changeEmail() async {
+    context.loaderOverlay.show();
+    try {
+      // await Auth().updateEmail(_controllerNewEmail);
+
+      _showNewEmailSentDialog();
+    } on FirebaseAuthException catch (e) {
+      context.loaderOverlay.hide();
+      if (e.code == 'user-not-found') {
+        showErrorDialog('Akun dengan email tersebut tidak ditemukan.');
+      } else {
+        showErrorDialog('Terjadi Kesalahan. Mohon Coba Lagi.');
+      }
+    }
   }
 
   @override
@@ -160,7 +134,7 @@ class _CreateAccountState extends State<CreateAccount> {
                                 height: 20.0,
                               ),
                               Text(
-                                "Daftar Akun Saya",
+                                "Ganti Email",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
@@ -195,34 +169,26 @@ class _CreateAccountState extends State<CreateAccount> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 InputWidget(
-                                  topLabel: "Nama Lengkap",
-                                  controller: _controllerFullName,
-                                  hintText: "Masukkan Nama Lengkap Anda",
-                                ),
-                                const SizedBox(
-                                  height: 25.0,
-                                ),
-                                InputWidget(
-                                  topLabel: "Email",
+                                  topLabel: "Email Lama",
                                   controller: _controllerEmail,
-                                  hintText: "Masukkan Email Anda",
+                                  hintText: "Masukkan Email Lama Anda",
                                 ),
                                 const SizedBox(
-                                  height: 25.0,
+                                  height: 15.0,
                                 ),
                                 InputWidget(
-                                  topLabel: "Password",
-                                  controller: _controllerPassword,
-                                  obscureText: true,
-                                  hintText: "Masukkan Password Anda",
+                                  topLabel: "Email Baru",
+                                  controller: _controllerNewEmail,
+                                  hintText: "Masukkan Email Baru Anda",
                                 ),
                                 const SizedBox(
-                                  height: 20.0,
+                                  height: 15.0,
                                 ),
                                 AppButton(
-                                    type: ButtonType.PRIMARY,
-                                    text: "Daftar Akun Saya",
-                                    onPressed: createUserWithEmailAndPassword)
+                                  type: ButtonType.PRIMARY,
+                                  text: "Ganti Email",
+                                  onPressed: changeEmail,
+                                )
                               ],
                             ),
                           ),

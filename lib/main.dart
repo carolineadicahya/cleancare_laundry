@@ -3,6 +3,7 @@ import 'package:CleanCare/screen/owner/layout_admin.dart';
 import 'package:CleanCare/screen/owner/order_user(admin).dart';
 import 'package:CleanCare/screen/reset_password.dart';
 import 'package:CleanCare/screen/user/dashboard_user.dart';
+import 'package:CleanCare/screen/user/ganti_email.dart';
 import 'package:CleanCare/screen/user/history.dart';
 import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:CleanCare/screen/user/order_user.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
             textTheme: GoogleFonts.poppinsTextTheme(),
           ),
           initialRoute: "/",
+          routes: {'/': (context) => const Login()},
           onGenerateRoute: _onGenerateRoute,
         );
       },
@@ -65,6 +67,10 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
     case "/reset":
       return MaterialPageRoute(builder: (BuildContext context) {
         return const ResetPage();
+      });
+    case "/change-email":
+      return MaterialPageRoute(builder: (BuildContext context) {
+        return const ChangeEmail();
       });
     case "/user":
       return MaterialPageRoute(builder: (BuildContext context) {

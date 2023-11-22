@@ -62,10 +62,12 @@ class LatestOrdersUser extends StatelessWidget {
                   vertical: 10.0,
                 ),
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: min(2, userOrders.length),
+                itemCount: min(3, userOrders.length),
                 itemBuilder: (context, index) {
                   final history =
                       userOrders[index].data() as Map<String, dynamic>;
+                  final DateTime orderDate =
+                      (history['tanggal order'] as Timestamp).toDate();
                   final status = getOrderStatusText(history['status'] ?? '');
 
                   // Let's pass the order details to the OrderCard widget
@@ -80,7 +82,8 @@ class LatestOrdersUser extends StatelessWidget {
                           }
                         }).toList() ??
                         [],
-                    orderDate: (history['tanggal order'] as Timestamp).toDate(),
+                    orderDate: orderDate,
+                    estimationDate: orderDate.add(Duration(days: 3)),
                     status: status,
                     onDetail: () {
                       final String id = userOrders[index].id;

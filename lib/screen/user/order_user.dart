@@ -43,79 +43,81 @@ class _OrderPageState extends State<OrderPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Expanded(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: orderService.getData(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
+        child: StreamBuilder<QuerySnapshot>(
+          stream: orderService.getData(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-              var items = snapshot.data!.docs;
-              var userOrders = items
-                  .where((order) => order['email'] == user?.email)
-                  .toList();
+            var items = snapshot.data!.docs;
+            var userOrders =
+                items.where((order) => order['email'] == user?.email).toList();
 
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: userOrders.length,
-                itemBuilder: (context, index) {
-                  final history =
-                      userOrders[index].data() as Map<String, dynamic>;
-                  final status = getOrderStatus(history['status'] ?? '');
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: userOrders.length,
+              itemBuilder: (context, index) {
+                final history =
+                    userOrders[index].data() as Map<String, dynamic>;
+                final status = getOrderStatus(history['status'] ?? '');
 
-                  return Dismissible(
-                    key: Key(userOrders[index].id),
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ),
+                return Dismissible(
+                  key: Key(userOrders[index].id),
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.only(right: 20.0),
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.white,
                     ),
-                    confirmDismiss: (direction) async {
-                      // Allow dismissal only if the status is 'Cancel' or 'Selesai'
-                      return status == OrderStatus.CANCEL ||
-                          status == OrderStatus.SELESAI;
-                    },
-                    onDismissed: (direction) {
-                      // Add the dismissed item key to the list
-                      dismissedItems.add(userOrders[index].id);
-                    },
-                    child: OrderCard(
-                      email: history['email'] ?? '',
-                      items: (history['items'] as List<dynamic>?)
-                              ?.map<Map<String, dynamic>>((item) {
-                            if (item is Map<String, dynamic>) {
-                              return item;
-                            } else {
-                              return {};
-                            }
-                          }).toList() ??
-                          [],
-                      orderDate:
-                          (history['tanggal order'] as Timestamp).toDate(),
-                      status: status,
-                      onDetail: () {
-                        final String id = userOrders[index].id;
-                        if (id != null) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => OrderDetailPage(
-                                id: id,
-                              ),
+                  ),
+                  confirmDismiss: (direction) async {
+                    return status == OrderStatus.CANCEL ||
+                        status == OrderStatus.SELESAI;
+                  },
+                  onDismissed: (direction) {
+                    dismissedItems.add(userOrders[index].id);
+                    // setState(() {
+                    //   if (userOrders.isNotEmpty) {
+                    //     // Check if the index is still within the valid range
+                    //     if (index >= 0 && index < userOrders.length) {
+                    //       userOrders.removeAt(index);
+                    //     }
+                    //   }
+                    // });
+                  },
+                  child: OrderCard(
+                    email: history['email'] ?? '',
+                    items: (history['items'] as List<dynamic>?)
+                            ?.map<Map<String, dynamic>>((item) {
+                          if (item is Map<String, dynamic>) {
+                            return item;
+                          } else {
+                            return {};
+                          }
+                        }).toList() ??
+                        [],
+                    orderDate: (history['tanggal order'] as Timestamp).toDate(),
+                    status: status,
+                    onDetail: () {
+                      final String id = userOrders[index].id;
+                      if (id != null) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => OrderDetailPage(
+                              id: id,
                             ),
-                          );
-                        }
-                      },
-                    ),
-                  );
-                },
-              );
-            },
-          ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

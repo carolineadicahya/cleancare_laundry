@@ -1,5 +1,4 @@
 import 'package:CleanCare/screen/owner/layout_admin.dart';
-import 'package:CleanCare/screen/reset_password.dart';
 import 'package:CleanCare/screen/user/layout_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +21,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+  final User? user = FirebaseAuth.instance.currentUser;
 
   void showErrorDialog(String errorMessage) {
     showDialog(
@@ -102,6 +102,10 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    if (user != null) {
+      checkRole(context);
+    }
+
     return Scaffold(
       backgroundColor: Constants.primaryColor,
       body: LoaderOverlay(
@@ -215,10 +219,10 @@ class _LoginState extends State<Login> {
                                     "Lupa Password?",
                                     textAlign: TextAlign.right,
                                     style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Constants.primaryColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                        decoration: TextDecoration.underline,
+                                        color: Constants.primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.0),
                                   ),
                                 ),
                                 const SizedBox(

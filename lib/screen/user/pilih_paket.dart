@@ -83,7 +83,7 @@ class _AddOrderState extends State<AddOrder> {
                             ),
                           ),
                           subtitle: Text(
-                            'Rp.${(data['price'])}',
+                            'Rp. ${(data['price'])}',
                             style: const TextStyle(
                               fontSize: 14.0,
                             ),

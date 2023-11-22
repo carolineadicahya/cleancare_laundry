@@ -10,6 +10,7 @@ class Order extends StatelessWidget {
     required this.email,
     required this.items,
     required this.orderDate,
+    required this.estimationDate,
     required this.status,
     required this.onDetail,
   });
@@ -17,6 +18,7 @@ class Order extends StatelessWidget {
   final String email;
   final List<Map<String, dynamic>> items;
   final DateTime orderDate;
+  final DateTime estimationDate;
   final OrderStatus status;
   final Function onDetail;
 
@@ -25,6 +27,8 @@ class Order extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String _status = getOrderStatusText(status);
+
     return GestureDetector(
       onTap: () {
         onDetail();
@@ -60,11 +64,17 @@ class Order extends StatelessWidget {
                   const SizedBox(
                     height: 10.0,
                   ),
-                  // textRow("Tanggal Order", orderDate as String),
+                  textRow(
+                      "Tanggal Order: ${DateFormat('dd MMMM yyyy').format(orderDate)}"),
                   const SizedBox(
                     height: 5.0,
                   ),
-                  textRow("Status", getOrderStatusText(status)),
+                  textRow(
+                      "Estimasi Tanggal: ${DateFormat('dd MMMM yyyy').format(estimationDate)}"),
+                  const SizedBox(
+                    height: 5.0,
+                  ),
+                  textRow("Status $_status"),
                 ],
               ),
             ),
@@ -75,7 +85,7 @@ class Order extends StatelessWidget {
   }
 }
 
-Widget textRow(String textOne, String textTwo) {
+Widget textRow(String textOne) {
   return Wrap(
     children: [
       Text(
@@ -87,13 +97,6 @@ Widget textRow(String textOne, String textTwo) {
       ),
       const SizedBox(
         width: 4.0,
-      ),
-      Text(
-        textTwo,
-        style: const TextStyle(
-          color: Color.fromRGBO(19, 22, 33, 1),
-          fontSize: 14.0,
-        ),
       ),
     ],
   );

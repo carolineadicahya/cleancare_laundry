@@ -1,4 +1,5 @@
 import 'package:CleanCare/screen/user/layout_user.dart';
+import 'package:CleanCare/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -235,28 +236,23 @@ class _ProfilePageState extends State<ProfilePage> {
                     phoneNumberController.text,
                     style: const TextStyle(fontSize: 16.0),
                   ),
+            const SizedBox(height: 16.0),
+            if (isEditing) isEditing ? saveButton : editButton,
             const SizedBox(height: 24.0),
-            const Text(
-              'Email',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/change-email');
+              },
+              child: Text(
+                "Ganti Email?",
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Constants.primaryColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0),
               ),
             ),
-            const SizedBox(height: 8.0),
-            isEditing
-                ? TextFormField(
-                    controller: emailController,
-                    decoration: const InputDecoration(
-                      hintText: 'Masukkan email Anda',
-                    ),
-                  )
-                : Text(
-                    emailController.text,
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-            const SizedBox(height: 24.0),
-            if (isEditing) isEditing ? saveButton : editButton,
           ],
         ),
       ),
@@ -279,7 +275,6 @@ class _ProfilePageState extends State<ProfilePage> {
           'name': nameController.text,
           'address': addressController.text,
           'phoneNumber': phoneNumberController.text,
-          // 'email': emailController.text,
           'profileImageURL': imageURL,
         }, SetOptions(merge: true));
       }

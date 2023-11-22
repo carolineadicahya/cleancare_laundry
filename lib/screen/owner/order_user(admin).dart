@@ -40,51 +40,49 @@ class _OrderUserState extends State<OrderUser> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Expanded(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: orderService.getData(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
-              var items = snapshot.data!.docs;
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  final history = items[index].data() as Map<String, dynamic>;
+        child: StreamBuilder<QuerySnapshot>(
+          stream: orderService.getData(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+            var items = snapshot.data!.docs;
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final history = items[index].data() as Map<String, dynamic>;
 
-                  return OrderCard(
-                    email: history['email'] ?? '',
-                    items: (history['items'] as List<dynamic>?)
-                            ?.map<Map<String, dynamic>>((item) {
-                          if (item is Map<String, dynamic>) {
-                            return item;
-                          } else {
-                            // Handle the case where 'items' is not a List<Map<String, dynamic>>
-                            return {};
-                          }
-                        }).toList() ??
-                        [],
-                    orderDate:
-                        (history['tanggal order'] as Timestamp?)?.toDate() ??
-                            DateTime.now(),
-                    status: getOrderStatus(history['status'] ?? ''),
-                    onDetail: () {
-                      final String id = items[index].id;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AdminOrderDetailPage(
-                            id: id,
-                          ),
+                return OrderCard(
+                  email: history['email'] ?? '',
+                  items: (history['items'] as List<dynamic>?)
+                          ?.map<Map<String, dynamic>>((item) {
+                        if (item is Map<String, dynamic>) {
+                          return item;
+                        } else {
+                          // Handle the case where 'items' is not a List<Map<String, dynamic>>
+                          return {};
+                        }
+                      }).toList() ??
+                      [],
+                  orderDate:
+                      (history['tanggal order'] as Timestamp?)?.toDate() ??
+                          DateTime.now(),
+                  status: getOrderStatus(history['status'] ?? ''),
+                  onDetail: () {
+                    final String id = items[index].id;
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AdminOrderDetailPage(
+                          id: id,
                         ),
-                      );
-                    },
-                  );
-                },
-              );
-            },
-          ),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          },
         ),
       ),
     );
